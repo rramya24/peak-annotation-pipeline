@@ -1,0 +1,26 @@
+To: ${email}
+Subject: ${subject}
+Mime-Version: 1.0
+Content-Type: multipart/related;boundary="nf-core-multisteppeak-annotation"
+
+--nf-core-multisteppeak-annotation
+Content-Type: text/html; charset=utf-8
+
+${email_html}
+
+<% if (mqcFile && mqcFile.size() <= mqcMaxSize) { %>
+--nf-core-multisteppeak-annotation
+Content-Type: application/zip; name="multiqc_report.html"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="multiqc_report.html"
+
+<% mqcFile.withInputStream { input ->
+    input.encodeBase64().toString().eachLine { line ->
+        out.println line
+    }
+} %>
+<% } %>
+
+--nf-core-multisteppeak-annotation--
+
+

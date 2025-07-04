@@ -1,0 +1,57 @@
+id: "methods"
+description: "Methods description"
+section_name: "nf-core/multisteppeak-annotation Methods Description"
+section_href: "https://github.com/nf-core/multisteppeak-annotation"
+plot_type: "html"
+data: |
+  <h4>Methods</h4>
+  <p>Data was processed using nf-core/multisteppeak-annotation v${workflow.manifest.version} ${nodoi_text} <a href="https://github.com/nf-core/multisteppeak-annotation">(Zenodo)</a> of the nf-core collection of workflows <a href="https://pubmed.ncbi.nlm.nih.gov/32055031/">(Ewels et al. 2020)</a>.</p>
+  <p>The pipeline was executed with Nextflow v${workflow.nextflow.version} <a href="https://pubmed.ncbi.nlm.nih.gov/28398311/">(Di Tommaso et al. 2017)</a> using the following command:</p>
+  <pre><code>${workflow.commandLine}</code></pre>
+  <p>Peak calling consensus was performed using MACS2 <a href="https://pubmed.ncbi.nlm.nih.gov/18798982/">(Zhang et al. 2008)</a> with a minimum of ${workflow.params.min_consensus_reps} replicates required for consensus peak calling.</p>
+  <p>Peak annotation was performed using HOMER <a href="https://pubmed.ncbi.nlm.nih.gov/20513432/">(Heinz et al. 2010)</a> with a distance threshold of ${workflow.params.homer_distance} bp from transcription start sites.</p>
+  <p>Genomic feature intersections were performed using BEDTools <a href="https://pubmed.ncbi.nlm.nih.gov/20110278/">(Quinlan and Hall 2010)</a> with an overlap fraction of ${workflow.params.intersect_overlap_fraction}.</p>
+  <% if (workflow.params.enable_lncrna_mirna_expansion) { %>
+  <p>lncRNA-miRNA target expansion was performed using custom scripts to identify potential regulatory relationships.</p>
+  <% } %>
+  <p>Gene ID to symbol conversion was performed using the provided GTF annotation file.</p>
+  <p>Quality control and summary statistics were generated using MultiQC <a href="https://pubmed.ncbi.nlm.nih.gov/27312411/">(Ewels et al. 2016)</a>.</p>
+  <h4>References</h4>
+  <ul>
+    <li>Di Tommaso, P., Chatzou, M., Floden, E. W., Barja, P. P., Palumbo, E., & Notredame, C. (2017). Nextflow enables reproducible computational workflows. Nature Biotechnology, 35(4), 316-319. <a href="https://pubmed.ncbi.nlm.nih.gov/28398311/">doi: 10.1038/nbt.3820</a></li>
+    <li>Ewels, P. A., Peltzer, A., Fillinger, S., Patel, H., Alneberg, J., Wilm, A., Garcia, M. U., Di Tommaso, P., & Nahnsen, S. (2020). The nf-core framework for community-curated bioinformatics pipelines. Nature Biotechnology, 38(3), 276-278. <a href="https://pubmed.ncbi.nlm.nih.gov/32055031/">doi: 10.1038/s41587-020-0439-x</a></li>
+    <li>Ewels, P., Magnusson, M., Lundin, S., & Käller, M. (2016). MultiQC: summarize analysis results for multiple tools and samples in a single report. Bioinformatics, 32(19), 3047-3048. <a href="https://pubmed.ncbi.nlm.nih.gov/27312411/">doi: 10.1093/bioinformatics/btw354</a></li>
+    <li>Heinz, S., Benner, C., Spann, N., Bertolino, E., Lin, Y. C., Laslo, P., Cheng, J. X., Murre, C., Singh, H., & Glass, C. K. (2010). Simple combinations of lineage-determining transcription factors prime cis-regulatory elements required for macrophage and B cell identities. Molecular Cell, 38(4), 576-589. <a href="https://pubmed.ncbi.nlm.nih.gov/20513432/">doi: 10.1016/j.molcel.2010.05.004</a></li>
+    <li>Quinlan, A. R., & Hall, I. M. (2010). BEDTools: a flexible suite of utilities for comparing genomic features. Bioinformatics, 26(6), 841-842. <a href="https://pubmed.ncbi.nlm.nih.gov/20110278/">doi: 10.1093/bioinformatics/btq033</a></li>
+    <li>Zhang, Y., Liu, T., Meyer, C. A., Eeckhoute, J., Johnson, D. S., Bernstein, B. E., Nusbaum, C., Myers, R. M., Brown, M., Li, W., & Liu, X. S. (2008). Model-based analysis of ChIP-Seq (MACS). Genome Biology, 9(9), R137. <a href="https://pubmed.ncbi.nlm.nih.gov/18798982/">doi: 10.1186/gb-2008-9-9-r137</a></li>
+    ${nodoi_text}
+  </ul>
+id: "methods"
+description: "Methods description"
+section_name: "nf-core/multisteppeak-annotation Methods Description"
+section_href: "https://github.com/nf-core/multisteppeak-annotation"
+plot_type: "html"
+data: |
+  <h4>Methods</h4>
+  <p>Data was processed using nf-core/multisteppeak-annotation v${workflow.manifest.version} ${nodoi_text} <a href="https://github.com/nf-core/multisteppeak-annotation">(Zenodo)</a> of the nf-core collection of workflows <a href="https://pubmed.ncbi.nlm.nih.gov/32055031/">(Ewels et al. 2020)</a>.</p>
+  <p>The pipeline was executed with Nextflow v${workflow.nextflow.version} <a href="https://pubmed.ncbi.nlm.nih.gov/28398311/">(Di Tommaso et al. 2017)</a> using the following command:</p>
+  <pre><code>${workflow.commandLine}</code></pre>
+  <p>Peak calling consensus was performed using MACS2 <a href="https://pubmed.ncbi.nlm.nih.gov/18798982/">(Zhang et al. 2008)</a> with a minimum of ${workflow.params.min_consensus_reps} replicates required for consensus peak calling.</p>
+  <p>Peak annotation was performed using HOMER <a href="https://pubmed.ncbi.nlm.nih.gov/20513432/">(Heinz et al. 2010)</a> with a distance threshold of ${workflow.params.homer_distance} bp from transcription start sites.</p>
+  <p>Genomic feature intersections were performed using BEDTools <a href="https://pubmed.ncbi.nlm.nih.gov/20110278/">(Quinlan and Hall 2010)</a> with an overlap fraction of ${workflow.params.intersect_overlap_fraction}.</p>
+  <% if (workflow.params.enable_lncrna_mirna_expansion) { %>
+  <p>lncRNA-miRNA target expansion was performed using custom scripts to identify potential regulatory relationships.</p>
+  <% } %>
+  <p>Gene ID to symbol conversion was performed using the provided GTF annotation file.</p>
+  <p>Quality control and summary statistics were generated using MultiQC <a href="https://pubmed.ncbi.nlm.nih.gov/27312411/">(Ewels et al. 2016)</a>.</p>
+  <h4>References</h4>
+  <ul>
+    <li>Di Tommaso, P., Chatzou, M., Floden, E. W., Barja, P. P., Palumbo, E., & Notredame, C. (2017). Nextflow enables reproducible computational workflows. Nature Biotechnology, 35(4), 316-319. <a href="https://pubmed.ncbi.nlm.nih.gov/28398311/">doi: 10.1038/nbt.3820</a></li>
+    <li>Ewels, P. A., Peltzer, A., Fillinger, S., Patel, H., Alneberg, J., Wilm, A., Garcia, M. U., Di Tommaso, P., & Nahnsen, S. (2020). The nf-core framework for community-curated bioinformatics pipelines. Nature Biotechnology, 38(3), 276-278. <a href="https://pubmed.ncbi.nlm.nih.gov/32055031/">doi: 10.1038/s41587-020-0439-x</a></li>
+    <li>Ewels, P., Magnusson, M., Lundin, S., & Käller, M. (2016). MultiQC: summarize analysis results for multiple tools and samples in a single report. Bioinformatics, 32(19), 3047-3048. <a href="https://pubmed.ncbi.nlm.nih.gov/27312411/">doi: 10.1093/bioinformatics/btw354</a></li>
+    <li>Heinz, S., Benner, C., Spann, N., Bertolino, E., Lin, Y. C., Laslo, P., Cheng, J. X., Murre, C., Singh, H., & Glass, C. K. (2010). Simple combinations of lineage-determining transcription factors prime cis-regulatory elements required for macrophage and B cell identities. Molecular Cell, 38(4), 576-589. <a href="https://pubmed.ncbi.nlm.nih.gov/20513432/">doi: 10.1016/j.molcel.2010.05.004</a></li>
+    <li>Quinlan, A. R., & Hall, I. M. (2010). BEDTools: a flexible suite of utilities for comparing genomic features. Bioinformatics, 26(6), 841-842. <a href="https://pubmed.ncbi.nlm.nih.gov/20110278/">doi: 10.1093/bioinformatics/btq033</a></li>
+    <li>Zhang, Y., Liu, T., Meyer, C. A., Eeckhoute, J., Johnson, D. S., Bernstein, B. E., Nusbaum, C., Myers, R. M., Brown, M., Li, W., & Liu, X. S. (2008). Model-based analysis of ChIP-Seq (MACS). Genome Biology, 9(9), R137. <a href="https://pubmed.ncbi.nlm.nih.gov/18798982/">doi: 10.1186/gb-2008-9-9-r137</a></li>
+    ${nodoi_text}
+  </ul>
+

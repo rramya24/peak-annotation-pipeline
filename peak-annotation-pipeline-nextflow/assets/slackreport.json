@@ -1,0 +1,46 @@
+{
+    "username": "nf-core-multisteppeak-annotation",
+    "icon_emoji": ":dna:",
+    "attachments": [
+        {
+            "fallback": "Pipeline ${success ? 'completed successfully' : 'failed'}",
+            "color": "${success ? 'good' : 'danger'}",
+            "author_name": "nf-core/multisteppeak-annotation",
+            "author_link": "https://github.com/nf-core/multisteppeak-annotation",
+            "author_icon": "https://www.nf-core.org/assets/img/logo/nf-core-logo-square.png",
+            "title": "Pipeline ${success ? 'completed successfully!' : 'failed'}",
+            "title_link": "https://github.com/nf-core/multisteppeak-annotation",
+            "text": "Run Name: ${runName}\nVersion: ${version}\nDuration: ${duration}\nExit Status: ${exitStatus}",
+            "fields": [
+                {
+                    "title": "Command Line",
+                    "value": "${commandLine}",
+                    "short": false
+                },
+                {
+                    "title": "Project Directory",
+                    "value": "${projectDir}",
+                    "short": true
+                },
+                {
+                    "title": "User",
+                    "value": "${summary['User']}",
+                    "short": true
+                },
+                {
+                    "title": "Date Started",
+                    "value": "${summary['Date Started']}",
+                    "short": true
+                },
+                {
+                    "title": "Date Completed",
+                    "value": "${dateComplete}",
+                    "short": true
+                }
+            ],
+            "footer": "nf-core/multisteppeak-annotation",
+            "footer_icon": "https://www.nf-core.org/assets/img/logo/nf-core-logo-square.png",
+            "ts": "${Math.round(new Date().getTime() / 1000)}"
+        }
+    ]
+}

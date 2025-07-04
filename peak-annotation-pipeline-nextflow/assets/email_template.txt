@@ -1,0 +1,81 @@
+========================================
+nf-core/multisteppeak-annotation Pipeline Report
+========================================
+
+Run Name: ${runName}
+Version: ${version}
+
+<% if (success) { %>
+✅ Pipeline completed successfully!
+<% } else { %>
+❌ Pipeline execution failed
+<% } %>
+
+----------------------------------------
+📊 Execution Summary
+----------------------------------------
+Date Started      : ${summary['Date Started']}
+Date Completed    : ${dateComplete}
+Duration          : ${duration}
+Exit Status       : ${exitStatus}
+Launch Directory  : ${summary['Launch Dir']}
+Work Directory    : ${summary['Working Dir']}
+Project Directory : ${projectDir}
+Nextflow Version  : ${summary['Nextflow Version']}
+
+----------------------------------------
+🔧 Configuration
+----------------------------------------
+<% summary.each { key, value -> %>
+    <% if (key.startsWith('Input') || key.startsWith('Output') || key.startsWith('Genome') || key.startsWith('GTF') || key.startsWith('CRM') || key.startsWith('Intron')) { %>
+${key.padRight(20)}: ${value ?: 'N/A'}
+    <% } %>
+<% } %>
+
+----------------------------------------
+💻 Command Line
+----------------------------------------
+${commandLine}
+
+<% if (!success) { %>
+----------------------------------------
+❌ Error Details
+----------------------------------------
+Error Message:
+${errorMessage}
+
+<% if (errorReport && errorReport != 'None') { %>
+Error Report:
+${errorReport}
+<% } %>
+<% } %>
+
+----------------------------------------
+📋 Pipeline Parameters
+----------------------------------------
+<% summary.each { key, value -> %>
+    <% if (!key.startsWith('Date') && !key.startsWith('Launch') && !key.startsWith('Work') && !key.startsWith('Project') && !key.startsWith('Nextflow') && !key.startsWith('Input') && !key.startsWith('Output') && !key.startsWith('Genome') && !key.startsWith('GTF') && !key.startsWith('CRM') && !key.startsWith('Intron')) { %>
+${key.padRight(20)}: ${value ?: 'N/A'}
+    <% } %>
+<% } %>
+
+----------------------------------------
+📚 References
+----------------------------------------
+If you use nf-core/multisteppeak-annotation for your analysis please cite:
+
+* The pipeline
+  https://doi.org/10.5281/zenodo.XXXXXXX
+
+* The nf-core framework
+  https://doi.org/10.1038/s41587-020-0439-x
+
+* Software dependencies
+  https://github.com/nf-core/multisteppeak-annotation/blob/master/CITATIONS.md
+
+========================================
+This report was generated automatically by the nf-core/multisteppeak-annotation pipeline.
+For more information, visit: https://github.com/nf-core/multisteppeak-annotation
+========================================
+
+# END OF SCRIPT
