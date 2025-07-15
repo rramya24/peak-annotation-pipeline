@@ -1,0 +1,38 @@
+{
+  "homer_genome": {
+    "type": "string",
+    "default": "dm6",
+    "description": "HOMER genome identifier for annotation",
+    "help_text": "Built-in HOMER genome. Common options: dm6, dm3, hg38, hg19, mm10, mm9",
+    "enum": ["dm6", "dm3", "hg38", "hg19", "mm10", "mm9", "custom"]
+  },
+  "homer_distance": {
+    "type": "integer",
+    "default": 1000,
+    "description": "Distance for HOMER promoter annotation (bp)",
+    "help_text": "Distance around TSS to consider as promoter region",
+    "minimum": 100,
+    "maximum": 10000
+  },
+  "homer_promoter_size": {
+    "type": "integer",
+    "description": "Size of promoter region for HOMER annotation (bp)",
+    "help_text": "Override default promoter size. Leave empty for HOMER defaults"
+  },
+  "homer_upstream": {
+    "type": "integer",
+    "description": "Upstream distance for HOMER gene annotation (bp)",
+    "help_text": "Distance upstream of gene to include in annotation"
+  },
+  "homer_downstream": {
+    "type": "integer",
+    "description": "Downstream distance for HOMER gene annotation (bp)",
+    "help_text": "Distance downstream of gene to include in annotation"
+  },
+  "skip_homer": {
+    "type": "boolean",
+    "default": false,
+    "description": "Skip HOMER annotation step",
+    "help_text": "Disable HOMER annotation entirely"
+  }
+}

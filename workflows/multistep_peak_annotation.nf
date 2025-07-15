@@ -23,6 +23,25 @@ if (params.input) {
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    HOMER PARAMETER VALIDATION AND ALIGNMENT
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+
+// Ensure HOMER genome parameter is properly set
+def homer_genome = params.homer_genome ?: params.genome ?: 'dm6'
+
+// Validate HOMER genome compatibility
+def valid_homer_genomes = ['dm6', 'dm3', 'hg38', 'hg19', 'mm10', 'mm9']
+if (!valid_homer_genomes.contains(homer_genome)) {
+    log.warn "WARNING: HOMER genome '${homer_genome}' may not be pre-installed. HOMER will attempt to download it."
+}
+
+log.info "HOMER genome set to: ${homer_genome}"
+
+/*
+
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     CONFIG FILES
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
