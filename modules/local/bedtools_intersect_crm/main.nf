@@ -24,24 +24,33 @@ process BEDTOOLS_INTERSECT_CRM {
     script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def overlap_arg = overlap_fraction > 0 ? "-f ${overlap_fraction}" : ""
     """
-    # Intersect peaks with CRM regions
-    bedtools intersect \\
-        -a $peaks \\
-        -b $crm_bed \\
-        -wa -wb \\
-        $overlap_arg \\
-        > ${prefix}.crm_intersected_raw.bed
-
-    # Process intersected peaks and add CRM annotation
+    # Process peaks with CRM regions using custom script
+    # Script filters out 'Unspecified' annotations internally
     intersect_crm_annotate.py \\
-        --intersected ${prefix}.crm_intersected_raw.bed \\
         --peaks $peaks \\
-        --output_intersected ${prefix}.crm_intersected.bed \\
-        --output_non_intersected ${prefix}.crm_non_intersected.bed \\
-        --output_annotation ${prefix}.crm_annotation.bed \\
+        --crm $crm_bed \\
+        --intersected ${prefix}.crm_intersected.bed \\
+        --annotated ${prefix}.crm_annotation.bed \\
+        --overlap-fraction $overlap_fraction \\
         $args
+
+    # Create non-intersected file: peaks that intersected ONLY unspecified CRMs
+    # OR peaks that didn't intersect any CRMs at all
+    # Script handles this logic internally by reading the intersected file
+
+    # Get peaks that intersected with specified CRMs
+    if [ -s "${prefix}.crm_intersected.bed" ]; then
+        # Extract peak names from intersected file (skip header)
+        tail -n +2 "${prefix}.crm_intersected.bed" | cut -f4 | sort -u > specified_peaks.txt
+
+        # Create non-intersected file: all peaks EXCEPT those with specified CRM hits
+        awk 'BEGIN{OFS="\t"} NR==FNR{specified[\$1]=1; next} !(\$4 in specified)' \\
+            specified_peaks.txt $peaks > ${prefix}.crm_non_intersected.bed
+    else
+        # No specified CRM intersections found - all peaks continue
+        cp $peaks ${prefix}.crm_non_intersected.bed
+    fi
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

@@ -255,11 +255,11 @@ workflow MULTISTEP_PEAK_ANNOTATION {
     //
     // SUBWORKFLOW: Multi-step peak annotation - processes each sample independently
     //
-    PEAK_ANNOTATION (
+     PEAK_ANNOTATION (
         ch_consensus_peaks,
-        ch_crm_bed,
-        ch_intron_bed,
-        ch_gtf,
+        ch_crm_bed.first(),  // Convert to value channel
+        ch_intron_bed.first(),
+        ch_gtf.first(),
         params.homer_distance,
         params.intersect_overlap_fraction,
         params.skip_crm,

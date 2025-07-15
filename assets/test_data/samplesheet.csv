@@ -1,0 +1,4 @@
+sample,replicate,peaks
+test_sample,1,assets/test_data/peaks/rep1_peaks.bed
+test_sample,2,assets/test_data/peaks/rep2_peaks.bed  
+test_sample,3,assets/test_data/peaks/rep3_peaks.bed

@@ -24,24 +24,23 @@ process BEDTOOLS_INTERSECT_INTRON {
     script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def overlap_arg = overlap_fraction > 0 ? "-f ${overlap_fraction}" : ""
     """
-    # Intersect peaks with intron regions
+    # Process peaks with intron regions using custom script
+    # (Script handles bedtools intersection internally)
+    intersect_intron_annotate.py \\
+        --peaks $peaks \\
+        --introns $intron_bed \\
+        --intersected ${prefix}.intron_intersected.bed \\
+        --annotated ${prefix}.intron_annotation.bed \\
+        --overlap-fraction $overlap_fraction \\
+        $args
+
+    # Create non-intersected file by finding peaks not in intersected
     bedtools intersect \\
         -a $peaks \\
         -b $intron_bed \\
-        -wa -wb \\
-        $overlap_arg \\
-        > ${prefix}.intron_intersected_raw.bed
-
-    # Process intersected peaks and add intron annotation
-    intersect_intron_annotate.py \\
-        --intersected ${prefix}.intron_intersected_raw.bed \\
-        --peaks $peaks \\
-        --output_intersected ${prefix}.intron_intersected.bed \\
-        --output_non_intersected ${prefix}.intron_non_intersected.bed \\
-        --output_annotation ${prefix}.intron_annotation.bed \\
-        $args
+        -v \\
+        > ${prefix}.intron_non_intersected.bed
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
