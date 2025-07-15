@@ -3,8 +3,8 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     nextflow/multistep-peak-annotation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Github : https://github.com/rramya24/peak-annotation-pipeline
-    need to check the link
+    Github :https://github.com/rramya24/peak-annotation-pipeline
+
 ----------------------------------------------------------------------------------------
 */
 
