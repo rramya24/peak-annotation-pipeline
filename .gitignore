@@ -43,3 +43,4 @@ Thumbs.db
 
 # Cache
 .cache/
+assets/test_data/annotations/drosophila.gtf
