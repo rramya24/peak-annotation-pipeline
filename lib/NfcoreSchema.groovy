@@ -2,7 +2,6 @@
 // This file holds several functions used for validation of parameters by nf-core pipelines
 //
 
-import nextflow.Nextflow
 import org.yaml.snakeyaml.Yaml
 import groovy.json.JsonSlurper
 
@@ -328,4 +327,3 @@ class NfcoreSchema {
     }
 }
 
-// END OF SCRIPT

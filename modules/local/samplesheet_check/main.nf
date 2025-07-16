@@ -30,4 +30,4 @@ process SAMPLESHEET_CHECK {
     """
 }
 
-# END OF MODULE
+

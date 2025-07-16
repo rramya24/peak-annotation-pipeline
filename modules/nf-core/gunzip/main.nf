@@ -41,4 +41,4 @@ process GUNZIP {
     """
 }
 
-# END OF MODULE
+

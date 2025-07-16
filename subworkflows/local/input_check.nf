@@ -40,7 +40,7 @@ workflow INPUT_CHECK {
         }
 
     emit:
-    samples = ch_samples_grouped        // channel: [ meta, [peaks_files] ]
+    peaks = ch_samples_grouped        // channel: [ meta, [peaks_files] ]
     individual = ch_individual_samples  // channel: [ meta, peaks_file ]
     versions = SAMPLESHEET_CHECK.out.versions // channel: [ versions.yml ]
 }

@@ -50,4 +50,4 @@ process EXPAND_TARGETS_LNCRNA {
     """
 }
 
-# END OF MODULE
+

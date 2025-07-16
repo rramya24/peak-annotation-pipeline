@@ -4,7 +4,6 @@
 
 import org.yaml.snakeyaml.Yaml
 import groovy.json.JsonBuilder
-import nextflow.Nextflow
 
 class NfcoreTemplate {
 
@@ -359,4 +358,3 @@ class NfcoreTemplate {
     }
 }
 
-// END OF SCRIPT

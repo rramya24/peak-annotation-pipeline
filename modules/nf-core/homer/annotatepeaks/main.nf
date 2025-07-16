@@ -52,4 +52,4 @@ process HOMER_ANNOTATEPEAKS {
     """
 }
 
-# END OF MODULE
+

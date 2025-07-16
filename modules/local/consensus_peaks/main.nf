@@ -59,4 +59,4 @@ process CONSENSUS_PEAKS {
     """
 }
 
-# END OF MODULE
+

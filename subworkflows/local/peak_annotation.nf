@@ -93,7 +93,7 @@ workflow PEAK_ANNOTATION {
     // STEP 5: Prepare final annotation output
     //
     PREPARE_ANNOTATION_OUTPUT (
-        CONVERT_GENEID_TO_SYMBOL.out.gene_symbols.groupTuple(),
+        CONVERT_GENEID_TO_SYMBOL.out.converted.groupTuple(),
         consensus_peaks
     )
     ch_versions = ch_versions.mix(PREPARE_ANNOTATION_OUTPUT.out.versions)
@@ -119,7 +119,7 @@ workflow PEAK_ANNOTATION {
     crm_annotated     = ch_crm_annotated                              // channel: [ val(meta), path(crm_annotated) ]
     intron_annotated  = ch_intron_annotated                           // channel: [ val(meta), path(intron_annotated) ]
     homer_annotated   = ch_homer_annotated                            // channel: [ val(meta), path(homer_annotated) ]
-    gene_symbols      = CONVERT_GENEID_TO_SYMBOL.out.gene_symbols     // channel: [ val(meta), path(gene_symbols) ]
+    gene_symbols      = CONVERT_GENEID_TO_SYMBOL.out.converted     // channel: [ val(meta), path(gene_symbols) ]
     final_report      = PREPARE_ANNOTATION_OUTPUT.out.report          // channel: [ val(meta), path(report) ]
     final_targets     = ch_final_targets                              // channel: [ val(meta), path(final_targets) ]
     expansion_log     = ch_expansion_log                              // channel: [ val(meta), path(expansion_log) ]
@@ -127,4 +127,3 @@ workflow PEAK_ANNOTATION {
     versions          = ch_versions                                   // channel: [ versions.yml ]
 }
 
-# END OF SUBWORKFLOW

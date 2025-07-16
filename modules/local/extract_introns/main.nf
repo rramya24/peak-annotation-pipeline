@@ -46,4 +46,4 @@ process EXTRACT_INTRONS {
     """
 }
 
-# END OF MODULE
+

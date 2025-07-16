@@ -74,4 +74,4 @@ process BEDTOOLS_INTERSECT_CRM {
     """
 }
 
-# END OF MODULE
+

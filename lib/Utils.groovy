@@ -2,37 +2,42 @@
 // This file holds several utility functions used within the nf-core pipeline template.
 //
 
-import nextflow.Nextflow
 import groovy.text.SimpleTemplateEngine
 
 class Utils {
 
-  //
-// When running with -profile conda, warn if channels have not been set-up appropriately
-//
-public static void checkCondaChannels(log) {
-    def channels = []  // <-- Declare channels OUTSIDE the closure
+    //
+    // When running with -profile conda, warn if channels have not been set-up appropriately
+    //
+    public static void checkCondaChannels(log) {
+        def channels = []
 
-    try {
-        Nextflow.script('bash', ['-c', 'conda config --show channels']).out.splitText().each { line ->
-            if (line.startsWith('  - ') && line.contains('conda-forge')) {
-                channels << 'conda-forge'
+        try {
+            // Simple check without using Nextflow.script
+            def proc = ['bash', '-c', 'conda config --show channels'].execute()
+            proc.waitFor()
+            if (proc.exitValue() == 0) {
+                proc.text.splitEachLine { line ->
+                    if (line.startsWith('  - ') && line.contains('conda-forge')) {
+                        channels << 'conda-forge'
+                    }
+                    if (line.startsWith('  - ') && line.contains('bioconda')) {
+                        channels << 'bioconda'
+                    }
+                }
             }
-            if (line.startsWith('  - ') && line.contains('bioconda')) {
-                channels << 'bioconda'
-            }
-        }
 
-        if (!channels.contains('conda-forge')) {
-            log.warn "conda-forge channel not found. Add with: conda config --add channels conda-forge"
+            if (!channels.contains('conda-forge')) {
+                log.warn "conda-forge channel not found. Add with: conda config --add channels conda-forge"
+            }
+            if (!channels.contains('bioconda')) {
+                log.warn "bioconda channel not found. Add with: conda config --add channels bioconda"
+            }
+        } catch (Exception e) {
+            log.debug "Could not check conda channels: ${e.message}"
         }
-        if (!channels.contains('bioconda')) {
-            log.warn "bioconda channel not found. Add with: conda config --add channels bioconda"
-        }
-    } catch (Exception e) {
-        log.debug "Could not check conda channels: ${e.message}"
     }
-}
+
     //
     // Check if a row has the expected number of columns
     //
@@ -321,5 +326,3 @@ public static void checkCondaChannels(log) {
         return validExtensions.any { it.toLowerCase() == ext }
     }
 }
-
-// END OF SCRIPT

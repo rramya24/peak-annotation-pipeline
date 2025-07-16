@@ -16,7 +16,6 @@ nextflow.enable.dsl = 2
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { WorkflowMain } from './lib/WorkflowMain.groovy'
 include { MULTISTEP_PEAK_ANNOTATION } from './workflows/multistep_peak_annotation'
 
 /*

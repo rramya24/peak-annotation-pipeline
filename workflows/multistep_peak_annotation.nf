@@ -4,10 +4,6 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { WorkflowMultistepPeakAnnotation } from '../lib/WorkflowMultistepPeakAnnotation'
-include { NfcoreSchema } from '../lib/NfcoreSchema'
-include { NfcoreTemplate } from '../lib/NfcoreTemplate'
-include { GenomeSpeciesMapping } from '../lib/GenomeSpeciesMapping'
 
 def summary_params = NfcoreSchema.paramsSummaryMap(workflow, params)
 
@@ -253,7 +249,7 @@ workflow MULTISTEP_PEAK_ANNOTATION {
             params.min_consensus_reps
         )
         ch_consensus_peaks = MACS2_CONSENSUS.out.consensus_peaks
-        ch_consensus_log = MACS2_CONSENSUS.out.log
+        ch_consensus_log = MACS2_CONSENSUS.out.log_report
         ch_versions = ch_versions.mix(MACS2_CONSENSUS.out.versions)
 
         // Log consensus peak results
@@ -390,4 +386,4 @@ workflow.onComplete {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-// END OF SCRIPT
+

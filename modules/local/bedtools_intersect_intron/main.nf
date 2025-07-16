@@ -64,4 +64,4 @@ process BEDTOOLS_INTERSECT_INTRON {
     """
 }
 
-# END OF MODULE
+

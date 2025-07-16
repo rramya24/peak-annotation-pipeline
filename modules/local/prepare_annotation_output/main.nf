@@ -53,4 +53,4 @@ process PREPARE_ANNOTATION_OUTPUT {
     """
 }
 
-# END OF MODULE
+

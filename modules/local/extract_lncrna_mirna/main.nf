@@ -46,4 +46,4 @@ process EXTRACT_LNCRNA_MIRNA {
     """
 }
 
-# END OF MODULE
+

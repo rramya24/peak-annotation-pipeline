@@ -48,8 +48,8 @@ workflow MACS2_CONSENSUS {
 
     emit:
     consensus_peaks = CONSENSUS_PEAKS.out.consensus_peaks  // channel: [ val(meta), path(consensus_peaks) ]
-    log            = CONSENSUS_PEAKS.out.log              // channel: [ val(meta), path(log) ]
+    log_report      = CONSENSUS_PEAKS.out.log              // channel: [ val(meta), path(log) ]
     versions       = ch_versions                          // channel: [ versions.yml ]
 }
 
-# END OF SUBWORKFLOW
+
