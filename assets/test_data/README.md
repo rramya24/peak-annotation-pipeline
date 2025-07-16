@@ -10,7 +10,6 @@ This directory contains test data files for the multi-step peak annotation pipel
 - `rep3_peaks.bed` - Replicate 3 peak calls
 
 ### Annotation Files (annotations/)
-- `drosophila.gtf` - Drosophila gene annotations BDGP6.54.114 from ensembl release 114
 - `crm_regions.bed` - Cis-regulatory module coordinates no chr and gene-names converted to fbgn geneids
 - `first_intron_regions.bed` - First intron coordinates no chr and gene name converted to geneids
 
