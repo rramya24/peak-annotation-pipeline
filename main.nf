@@ -1,9 +1,9 @@
 #!/usr/bin/env nextflow
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    nextflow/multistep-peak-annotation
+    nf-core/multistep-peak-annotation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Github :https://github.com/rramya24/peak-annotation-pipeline
+    Github : https://github.com/rramya24/peak-annotation-pipeline
 
 ----------------------------------------------------------------------------------------
 */
@@ -18,21 +18,6 @@ nextflow.enable.dsl = 2
 
 include { WorkflowMain } from './lib/WorkflowMain'
 include { MULTISTEP_PEAK_ANNOTATION } from './workflows/multistep_peak_annotation'
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    GENOME PARAMETER VALUES
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-// Note: These parameters are only used if iGenomes is enabled
-// Since we removed iGenomes, these will return null but won't cause errors
-params.fasta          = WorkflowMain.getGenomeAttribute(params, 'fasta')
-params.gtf            = WorkflowMain.getGenomeAttribute(params, 'gtf')
-params.gene_bed       = WorkflowMain.getGenomeAttribute(params, 'gene_bed')
-params.macs_gsize     = WorkflowMain.getGenomeAttribute(params, 'macs_gsize')
-params.blacklist      = WorkflowMain.getGenomeAttribute(params, 'blacklist')
-params.read_length    = WorkflowMain.getGenomeAttribute(params, 'read_length')
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -74,5 +59,3 @@ workflow {
     THE END
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
-
-// END OF SCRIPT

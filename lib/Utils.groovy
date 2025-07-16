@@ -7,15 +7,14 @@ import groovy.text.SimpleTemplateEngine
 
 class Utils {
 
-    //
-    // When running with -profile conda, warn if channels have not been set-up appropriately
-    //
-    public static void checkCondaChannels(log) {
+  //
+// When running with -profile conda, warn if channels have not been set-up appropriately
+//
+public static void checkCondaChannels(log) {
+    def channels = []  // <-- Declare channels OUTSIDE the closure
+
+    try {
         Nextflow.script('bash', ['-c', 'conda config --show channels']).out.splitText().each { line ->
-            if (line.startsWith('channels:')) {
-                def channels = []
-                return
-            }
             if (line.startsWith('  - ') && line.contains('conda-forge')) {
                 channels << 'conda-forge'
             }
@@ -23,14 +22,17 @@ class Utils {
                 channels << 'bioconda'
             }
         }
+
         if (!channels.contains('conda-forge')) {
             log.warn "conda-forge channel not found. Add with: conda config --add channels conda-forge"
         }
         if (!channels.contains('bioconda')) {
             log.warn "bioconda channel not found. Add with: conda config --add channels bioconda"
         }
+    } catch (Exception e) {
+        log.debug "Could not check conda channels: ${e.message}"
     }
-
+}
     //
     // Check if a row has the expected number of columns
     //
