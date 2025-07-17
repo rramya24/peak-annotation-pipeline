@@ -27,7 +27,7 @@ process CONSENSUS_PEAKS {
     def peak_files = peaks.collect{it.toString()}.join(' ')
     """
     # This is the exact same logic from nf-core/chipseq v2.0
-    sort -k1,1V -k2,2n -k3,3n ${peak_files} | mergeBed -i stdin -d 150 -c 4 -o count_distinct > ${prefix}.consensus_peaks.txt
+    sort -k1,1 -k2,2n -k3,3n ${peak_files} | mergeBed -i stdin -d 150 -c 4 -o count_distinct > ${prefix}.consensus_peaks.txt
 
     python \${projectDir}/bin/consensus_peaks.py \\
         --peak_files ${peak_files} \\
