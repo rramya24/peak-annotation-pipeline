@@ -29,3 +29,8 @@
 2025-07-16 23:13:41	-	distracted_legentil	-	44f96ed81dbf627ec22fb557ae208ae6	8d8d6d6b-3d49-4045-92c9-af4a640265cd	nextflow run . -profile test -preview
 2025-07-16 23:21:57	-	deadly_perlman	-	44f96ed81dbf627ec22fb557ae208ae6	7bb08192-6cf5-48e5-9441-412ed761c9cb	nextflow run . -profile test -preview
 2025-07-16 23:35:29	-	big_curie	-	44f96ed81dbf627ec22fb557ae208ae6	9050848e-c4b7-47ea-ad7d-f714e249dc5f	nextflow run . -profile test -preview
+2025-07-17 10:13:25	4.5s	ridiculous_wilson	OK	44f96ed81dbf627ec22fb557ae208ae6	58a9fba4-31e1-4b8b-b479-a594de45c000	nextflow run . -profile test_full -preview
+2025-07-17 10:17:10	4.5s	small_swanson	OK	44f96ed81dbf627ec22fb557ae208ae6	ccd993e0-1660-4d69-addf-9b95a4a691ed	nextflow run . -profile test_full -preview
+2025-07-17 10:18:16	4.2s	kickass_mahavira	OK	44f96ed81dbf627ec22fb557ae208ae6	17ff76dc-3cf1-4cad-8805-efb4be02c048	nextflow run . -profile test_full -preview
+2025-07-17 10:22:01	4.2s	confident_williams	OK	44f96ed81dbf627ec22fb557ae208ae6	85d8eaa3-3a13-43e3-8434-f19dff39751a	nextflow run . -profile test_full -preview
+2025-07-17 10:26:45	4.7s	voluminous_wing	OK	44f96ed81dbf627ec22fb557ae208ae6	4938223d-fabf-4826-9a7e-1992445668e6	nextflow run . -profile test_full -preview

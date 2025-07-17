@@ -324,35 +324,7 @@ workflow MULTISTEP_PEAK_ANNOTATION {
         ch_multiqc_custom_config.toList(),
         ch_multiqc_logo.toList()
     )
-    // REMOVED: multiqc_report = MULTIQC.out.report.toList()  <-- THIS WAS THE PROBLEM LINE
     ch_versions = ch_versions.mix(MULTIQC.out.versions)
-
-    //
-    // Print final summary
-    //
-    workflow.onComplete {
-        log.info "Pipeline completed successfully!"
-        if (params.input) {
-            def sample_count = 0
-            INPUT_CHECK.out.peaks
-                .map { meta, peaks -> meta.id }
-                .unique()
-                .count()
-                .subscribe { count ->
-                    sample_count = count
-                    log.info "Processed ${sample_count} samples with multi-step peak annotation"
-                }
-        } else {
-            log.info "Processed consensus peaks with multi-step peak annotation"
-        }
-
-        if (params.gtf) {
-            log.info "GTF file used: ${params.gtf}"
-        } else {
-            log.info "GTF downloaded from Ensembl release ${params.ensembl_version}"
-        }
-        log.info "Results available in: ${params.outdir}"
-    }
 
     emit:
     multiqc_report = MULTIQC.out.report
@@ -366,9 +338,21 @@ workflow MULTISTEP_PEAK_ANNOTATION {
 */
 
 workflow.onComplete {
+    log.info "Pipeline completed successfully!"
+    if (params.input) {
+        log.info "Processed samples with multi-step peak annotation"
+    } else {
+        log.info "Processed consensus peaks with multi-step peak annotation"
+    }
+
+    if (params.gtf) {
+        log.info "GTF file used: ${params.gtf}"
+    } else {
+        log.info "GTF downloaded from Ensembl release ${params.ensembl_version}"
+    }
+    log.info "Results available in: ${params.outdir}"
+
     if (params.email || params.email_on_fail) {
-        // REMOVED: NfcoreTemplate.email(workflow, params, summary_params, projectDir, log, multiqc_report)
-        // FIXED: Use the emit output instead
         NfcoreTemplate.email(workflow, params, summary_params, projectDir, log, [])
     }
     NfcoreTemplate.summary(workflow, params, log)
