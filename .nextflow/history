@@ -34,3 +34,13 @@
 2025-07-17 10:18:16	4.2s	kickass_mahavira	OK	44f96ed81dbf627ec22fb557ae208ae6	17ff76dc-3cf1-4cad-8805-efb4be02c048	nextflow run . -profile test_full -preview
 2025-07-17 10:22:01	4.2s	confident_williams	OK	44f96ed81dbf627ec22fb557ae208ae6	85d8eaa3-3a13-43e3-8434-f19dff39751a	nextflow run . -profile test_full -preview
 2025-07-17 10:26:45	4.7s	voluminous_wing	OK	44f96ed81dbf627ec22fb557ae208ae6	4938223d-fabf-4826-9a7e-1992445668e6	nextflow run . -profile test_full -preview
+2025-07-17 10:34:32	4.4s	shrivelled_blackwell	ERR	44f96ed81dbf627ec22fb557ae208ae6	98390d2d-0014-4dd8-bd06-39d7edfe6f23	nextflow run . -profile test_full --outdir results
+2025-07-17 10:39:14	4.4s	cranky_sanger	ERR	44f96ed81dbf627ec22fb557ae208ae6	e90edbba-b21f-437a-82aa-d971d9f9d60c	nextflow run . -profile test_full --outdir results
+2025-07-17 10:42:12	4.7s	extravagant_mcnulty	ERR	44f96ed81dbf627ec22fb557ae208ae6	3100184f-e856-400a-a52c-3602c0e296d6	nextflow run . -profile test_full --outdir results
+2025-07-17 10:43:34	6.9s	tender_panini	ERR	44f96ed81dbf627ec22fb557ae208ae6	6ca00e2a-a2e1-4025-b48c-f2e9da9b3bc6	nextflow run . -profile test_full --outdir results
+2025-07-17 10:48:18	5.6s	condescending_mestorf	ERR	44f96ed81dbf627ec22fb557ae208ae6	5f91f3b7-cb86-498f-bf6e-9caad5c8323d	nextflow run . -profile test_full --outdir results
+2025-07-17 10:58:22	36.4s	high_nightingale	ERR	44f96ed81dbf627ec22fb557ae208ae6	4981c761-c192-471d-851c-54ffe46f90ba	nextflow run . -profile test_full,docker --outdir results
+2025-07-17 12:04:40	8.2s	prickly_gauss	ERR	44f96ed81dbf627ec22fb557ae208ae6	18e94f58-cb5b-40f0-b82e-ef15568f90d3	nextflow run . -profile test_full,docker --outdir results
+2025-07-17 12:09:55	1m 12s	loving_raman	ERR	44f96ed81dbf627ec22fb557ae208ae6	480b331b-6179-4d83-a686-9bf432dc887b	nextflow run . -profile test_full,docker --outdir results
+2025-07-17 12:27:18	8.8s	gigantic_agnesi	ERR	44f96ed81dbf627ec22fb557ae208ae6	51b95920-e485-4087-80e9-9a1c179de976	nextflow run . -profile test_full,docker --outdir results
+2025-07-17 12:32:12	7.1s	lethal_goldwasser	ERR	44f96ed81dbf627ec22fb557ae208ae6	095c6516-9daf-4ddc-9b70-845c61c162f4	nextflow run . -profile test_full,docker --outdir results

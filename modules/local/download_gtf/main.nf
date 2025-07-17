@@ -4,8 +4,8 @@ process DOWNLOAD_GTF {
 
     conda (params.enable_conda ? "conda-forge::wget=1.20.3" : null)
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/wget:1.20.3' :
-        'quay.io/biocontainers/wget:1.20.3' }"
+        'https://depot.galaxyproject.org/singularity/ubuntu:20.04' :
+        'ubuntu:20.04' }"
 
     input:
     val species
