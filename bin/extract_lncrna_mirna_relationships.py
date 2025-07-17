@@ -94,19 +94,47 @@ def find_lncrna_mirna_relationships(genes):
     """Find lncRNA-miRNA encoding relationships."""
     relationships = []
 
-    # Get lncRNAs and miRNAs
+    # Get lncRNAs and miRNAs with improved detection
     lncrnas = {}
     mirnas = {}
 
     for gene_id, info in genes.items():
         biotype = info['gene_biotype'].lower()
+        gene_name = info['gene_name'].lower()
 
-        if 'lncrna' in biotype or 'lincrna' in biotype or 'long_ncrna' in biotype:
+        # Improved lncRNA detection
+        is_lncrna = (
+            'lncrna' in biotype or
+            'lincrna' in biotype or
+            'long_ncrna' in biotype or
+            (biotype == 'ncrna' and 'lncrna:' in gene_name) or  # Drosophila pattern
+            (biotype == 'ncrna' and gene_name.startswith('lncrna:'))
+        )
+
+        # Improved miRNA detection
+        is_mirna = (
+            'mirna' in biotype or
+            'micro_rna' in biotype or
+            gene_name.startswith('mir-') or
+            gene_name.startswith('mirna:') or
+            (biotype == 'ncrna' and 'mir-' in gene_name and not 'lncrna:' in gene_name)  # Drosophila pattern
+        )
+
+        if is_lncrna:
             lncrnas[gene_id] = info
-        elif 'mirna' in biotype or 'micro_rna' in biotype or info['gene_name'].startswith('mir-'):
+        elif is_mirna:
             mirnas[gene_id] = info
 
     print(f"Found {len(lncrnas)} lncRNAs and {len(mirnas)} miRNAs")
+
+    # Debug: Print what was found
+    print("lncRNAs found:")
+    for gene_id, info in lncrnas.items():
+        print(f"  {gene_id}: {info['gene_name']} ({info['gene_biotype']})")
+
+    print("miRNAs found:")
+    for gene_id, info in mirnas.items():
+        print(f"  {gene_id}: {info['gene_name']} ({info['gene_biotype']})")
 
     # Find overlapping relationships
     for lncrna_id, lncrna_info in lncrnas.items():
@@ -133,6 +161,8 @@ def find_lncrna_mirna_relationships(genes):
                     'overlap_info': f"encoded:{overlap_fraction:.2f}"
                 })
 
+                print(f"Found relationship: {lncrna_info['gene_name']} encodes {mirna_info['gene_name']}")
+
     print(f"Found {len(relationships)} lncRNA-miRNA encoding relationships")
     return relationships
 
@@ -147,8 +177,11 @@ def write_relationships(relationships, output_file):
 
 def write_summary(relationships, genes, summary_file):
     """Write summary statistics."""
-    lncrna_count = len([g for g in genes.values() if 'lncrna' in g['gene_biotype'].lower()])
-    mirna_count = len([g for g in genes.values() if 'mirna' in g['gene_biotype'].lower() or g['gene_name'].startswith('mir-')])
+    lncrna_count = len([g for g in genes.values() if 'lncrna' in g['gene_biotype'].lower() or
+                       ('ncrna' in g['gene_biotype'].lower() and 'lncrna:' in g['gene_name'].lower())])
+    mirna_count = len([g for g in genes.values() if 'mirna' in g['gene_biotype'].lower() or
+                      g['gene_name'].lower().startswith('mir-') or
+                      ('ncrna' in g['gene_biotype'].lower() and 'mir-' in g['gene_name'].lower() and 'lncrna:' not in g['gene_name'].lower())])
 
     # Count unique lncRNAs and miRNAs with relationships
     lncrnas_with_mirnas = set(rel['lncrna_id'] for rel in relationships)
@@ -218,8 +251,11 @@ def main():
         print("lncRNA-miRNA relationship extraction completed successfully!")
 
         # Print summary to stdout
-        lncrna_count = len([g for g in genes.values() if 'lncrna' in g['gene_biotype'].lower()])
-        mirna_count = len([g for g in genes.values() if 'mirna' in g['gene_biotype'].lower() or g['gene_name'].startswith('mir-')])
+        lncrna_count = len([g for g in genes.values() if 'lncrna' in g['gene_biotype'].lower() or
+                           ('ncrna' in g['gene_biotype'].lower() and 'lncrna:' in g['gene_name'].lower())])
+        mirna_count = len([g for g in genes.values() if 'mirna' in g['gene_biotype'].lower() or
+                          g['gene_name'].lower().startswith('mir-') or
+                          ('ncrna' in g['gene_biotype'].lower() and 'mir-' in g['gene_name'].lower() and 'lncrna:' not in g['gene_name'].lower())])
 
         print(f"\nSummary:")
         print(f"  Total genes: {len(genes)}")
