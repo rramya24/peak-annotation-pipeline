@@ -3,9 +3,10 @@ process CONSENSUS_PEAKS {
     label 'process_medium'
 
     conda (params.enable_conda ? "bioconda::bedtools=2.30.0" : null)
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/bedtools:2.30.0--hc088bd4_0' :
-        'quay.io/biocontainers/bedtools:2.30.0--hc088bd4_0' }"
+
+     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+    'https://depot.galaxyproject.org/singularity/mulled-v2-8186960447c5cb2faa697666dc1e6d919ad23f3e:3127fcae6b6bdaf8181e21a26ae61231030a9fcb-0' :
+    'biocontainers/mulled-v2-8186960447c5cb2faa697666dc1e6d919ad23f3e:3127fcae6b6bdaf8181e21a26ae61231030a9fcb-0' }"
 
     input:
     tuple val(meta), path(peaks)
@@ -29,7 +30,7 @@ process CONSENSUS_PEAKS {
     # This is the exact same logic from nf-core/chipseq v2.0
     sort -k1,1 -k2,2n -k3,3n ${peak_files} | mergeBed -i stdin -d 150 -c 4 -o count_distinct > ${prefix}.consensus_peaks.txt
 
-    python $projectDir/bin/consensus_peaks.py \\
+    python3 $projectDir/bin/consensus_peaks.py \\
         --peak_files ${peak_files} \\
         --min_reps $min_reps \\
         --prefix $prefix \\
