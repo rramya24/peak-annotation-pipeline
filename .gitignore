@@ -51,3 +51,4 @@ assets/test_data/annotations/
 assets/test_data/annotations/drosophila.gtf
 *.gtf
 assets/test_data/annotations/
+nextflow
