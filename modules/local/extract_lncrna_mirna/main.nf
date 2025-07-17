@@ -25,7 +25,7 @@ process EXTRACT_LNCRNA_MIRNA {
     extract_lncrna_mirna_relationships.py \\
         --gtf $gtf \\
         --output lncrna_mirna_mapping.txt \\
-        --log lncrna_mirna_extraction.log \\
+        --summary lncrna_mirna_extraction.log \\
         $args
 
     cat <<-END_VERSIONS > versions.yml
