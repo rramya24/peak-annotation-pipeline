@@ -162,7 +162,13 @@ def write_summary(relationships, genes, summary_file):
         f.write(f"lncRNA-miRNA relationships found: {len(relationships)}\n")
         f.write(f"lncRNAs that encode miRNAs: {len(lncrnas_with_mirnas)}\n")
         f.write(f"miRNAs encoded by lncRNAs: {len(mirnas_with_lncrnas)}\n")
-        f.write(f"Average relationships per lncRNA: {len(relationships)/len(lncrnas_with_mirnas):.2f}\n")
+
+        # Fix division by zero error
+        if len(lncrnas_with_mirnas) > 0:
+            avg_relationships = len(relationships) / len(lncrnas_with_mirnas)
+            f.write(f"Average relationships per lncRNA: {avg_relationships:.2f}\n")
+        else:
+            f.write("Average relationships per lncRNA: 0.00 (no relationships found)\n")
 
         f.write("\n# Relationship details:\n")
         f.write("# lncRNA encodes miRNA - miRNA sequence contained within lncRNA\n")
