@@ -170,7 +170,7 @@ def generate_expansion_summary(original_targets, expanded_targets, summary_file)
             elif 'miRNA_encoded_by' in target['annotation_types']:
                 hosted_mirnas += 1
 
-with open(summary_file, 'w') as f:
+    with open(summary_file, 'w') as f:
         f.write("# Simple lncRNA-miRNA Target Expansion Summary\n")
         f.write(f"Original targets: {original_count}\n")
         f.write(f"Expanded targets: {expanded_count}\n")
