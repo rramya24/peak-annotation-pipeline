@@ -29,7 +29,7 @@ process CONSENSUS_PEAKS {
     # This is the exact same logic from nf-core/chipseq v2.0
     sort -k1,1 -k2,2n -k3,3n ${peak_files} | mergeBed -i stdin -d 150 -c 4 -o count_distinct > ${prefix}.consensus_peaks.txt
 
-    python $projectDir/bin/consensus_peaks.py \\
+    $projectDir/bin/consensus_peaks.py \\
         --peak_files ${peak_files} \\
         --min_reps $min_reps \\
         --prefix $prefix \\
