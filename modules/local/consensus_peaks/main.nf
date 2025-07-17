@@ -4,8 +4,8 @@ process CONSENSUS_PEAKS {
 
     conda (params.enable_conda ? "bioconda::bedtools=2.30.0" : null)
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-    'https://depot.galaxyproject.org/singularity/mulled-v2-8186960447c5cb2faa697666dc1e6d919ad23f3e:3127fcae6b6bdaf8181e21a26ae61231030a9fcb-0' :
-    'biocontainers/mulled-v2-8186960447c5cb2faa697666dc1e6d919ad23f3e:3127fcae6b6bdaf8181e21a26ae61231030a9fcb-0' }"
+    'https://depot.galaxyproject.org/singularity/mulled-v2-fe8faa35dbf6dc65a0f7f5d4ea12e31a79f73e40:8110103f17e3bed4bd85a71824d2f8f7de1ccdc0-0' :
+    'biocontainers/mulled-v2-fe8faa35dbf6dc65a0f7f5d4ea12e31a79f73e40:8110103f17e3bed4bd85a71824d2f8f7de1ccdc0-0' }"
 
     input:
     tuple val(meta), path(peaks)
