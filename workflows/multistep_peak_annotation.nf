@@ -196,7 +196,7 @@ workflow MULTISTEP_PEAK_ANNOTATION {
     // Print sample processing information (only if using samplesheet)
     //
     if (params.input) {
-        INPUT_CHECK.out.peaks
+        INPUT_CHECK.out.individual
             .map { meta, peaks -> meta.id }
             .unique()
             .collect()
@@ -240,7 +240,7 @@ workflow MULTISTEP_PEAK_ANNOTATION {
         // Scenario 2: Generate consensus peaks from samplesheet
         // Run MACS2_CONSENSUS on input peaks
         MACS2_CONSENSUS (
-            INPUT_CHECK.out.peaks,
+            INPUT_CHECK.out.individual,
             params.min_consensus_reps
         )
         ch_consensus_peaks = MACS2_CONSENSUS.out.consensus_peaks
@@ -255,7 +255,7 @@ workflow MULTISTEP_PEAK_ANNOTATION {
     } else if (params.input && params.skip_consensus) {
         // Scenario 3: Skip consensus entirely, use individual peaks
         // Pass through individual peaks from samplesheet
-        ch_consensus_peaks = INPUT_CHECK.out.peaks
+        ch_consensus_peaks = INPUT_CHECK.out.individual
         log.info "Skipping consensus calling - using individual peaks for annotation"
 
     } else {
