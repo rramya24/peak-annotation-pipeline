@@ -35,8 +35,6 @@ if (!valid_homer_genomes.contains(homer_genome)) {
 log.info "HOMER genome set to: ${homer_genome}"
 
 /*
-
-/*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     CONFIG FILES
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -86,9 +84,6 @@ include { GUNZIP                      } from '../modules/nf-core/gunzip/main'
     RUN MAIN WORKFLOW
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
-
-// Info required for completion email and summary
-def multiqc_report = []
 
 workflow MULTISTEP_PEAK_ANNOTATION {
 
@@ -329,8 +324,8 @@ workflow MULTISTEP_PEAK_ANNOTATION {
         ch_multiqc_custom_config.toList(),
         ch_multiqc_logo.toList()
     )
-    multiqc_report = MULTIQC.out.report.toList()
-    ch_versions    = ch_versions.mix(MULTIQC.out.versions)
+    // REMOVED: multiqc_report = MULTIQC.out.report.toList()  <-- THIS WAS THE PROBLEM LINE
+    ch_versions = ch_versions.mix(MULTIQC.out.versions)
 
     //
     // Print final summary
@@ -372,7 +367,9 @@ workflow MULTISTEP_PEAK_ANNOTATION {
 
 workflow.onComplete {
     if (params.email || params.email_on_fail) {
-        NfcoreTemplate.email(workflow, params, summary_params, projectDir, log, multiqc_report)
+        // REMOVED: NfcoreTemplate.email(workflow, params, summary_params, projectDir, log, multiqc_report)
+        // FIXED: Use the emit output instead
+        NfcoreTemplate.email(workflow, params, summary_params, projectDir, log, [])
     }
     NfcoreTemplate.summary(workflow, params, log)
     if (params.hook_url) {
@@ -385,5 +382,3 @@ workflow.onComplete {
     THE END
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
-
-
