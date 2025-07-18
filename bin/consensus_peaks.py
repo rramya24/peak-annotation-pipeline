@@ -7,8 +7,6 @@ Handles peak files with or without identifiers, generates proper names
 
 import os
 import argparse
-import pandas as pd
-from collections import OrderedDict
 
 def parse_args():
     """Parse command line arguments"""

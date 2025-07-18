@@ -3,9 +3,9 @@ process CONSENSUS_PEAKS {
     label 'process_medium'
 
     conda (params.enable_conda ? "bioconda::bedtools=2.30.0" : null)
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-    'https://depot.galaxyproject.org/singularity/mulled-v2-fe8faa35dbf6dc65a0f7f5d4ea12e31a79f73e40:8110103f17e3bed4bd85a71824d2f8f7de1ccdc0-0' :
-    'biocontainers/mulled-v2-fe8faa35dbf6dc65a0f7f5d4ea12e31a79f73e40:8110103f17e3bed4bd85a71824d2f8f7de1ccdc0-0' }"
+container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+    'https://depot.galaxyproject.org/singularity/mulled-v2-2f48cc59b03027e31ead6d383fe1b8057785dd24:5d182f583f4696f4c4d9f3be93052811b383341f-0' :
+    'biocontainers/mulled-v2-2f48cc59b03027e31ead6d383fe1b8057785dd24:5d182f583f4696f4c4d9f3be93052811b383341f-0' }"
 
     input:
     tuple val(meta), path(peaks)
