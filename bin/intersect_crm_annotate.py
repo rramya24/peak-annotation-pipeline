@@ -23,9 +23,13 @@ def run_bedtools_intersect(peaks_file, crm_file, output_file, overlap_fraction=0
             'bedtools', 'intersect',
             '-a', peaks_file,
             '-b', crm_file,
-            '-wa', '-wb',  # Write both A and B entries
-            '-f', str(overlap_fraction)
+            '-wa', '-wb'  # Write both A and B entries
         ]
+
+        # Only add -f parameter if overlap_fraction > 0
+        # Default bedtools behavior (no -f) = any overlap (≥1bp)
+        if overlap_fraction > 0.0:
+            cmd.extend(['-f', str(overlap_fraction)])
 
         print(f"Running: {' '.join(cmd)}")
 
