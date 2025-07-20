@@ -33,7 +33,6 @@ process BEDTOOLS_INTERSECT_INTRON {
         --intersected ${prefix}.intron_intersected.bed \\
         --annotated ${prefix}.intron_annotation.bed \\
         --overlap-fraction $overlap_fraction \\
-        $args
 
     # Create non-intersected file by finding peaks not in intersected
     bedtools intersect \\

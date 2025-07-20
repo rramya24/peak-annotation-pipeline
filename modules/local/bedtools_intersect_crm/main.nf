@@ -32,7 +32,6 @@ process BEDTOOLS_INTERSECT_CRM {
         --intersected ${prefix}.crm_intersected.bed \\
         --annotated ${prefix}.crm_annotation.bed \\
         --overlap-fraction $overlap_fraction \\
-        $args
 
     # Create non-intersected file: peaks that intersected ONLY unspecified CRMs
     # OR peaks that didn't intersect any CRMs at all
