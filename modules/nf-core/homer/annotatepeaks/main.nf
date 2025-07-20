@@ -39,9 +39,10 @@ process HOMER_ANNOTATEPEAKS {
     echo "First chromosome in peak file: \$FIRST_CHR"
 
     # For Drosophila, chromosomes should be: chr2L, chr2R, chr3L, chr3R, chrX, chrY, chr4, chrM
-    if [[ \$FIRST_CHR =~ ^[0-9XYM]$ ]] || [[ \$FIRST_CHR == "2L" ]] || [[ \$FIRST_CHR == "2R" ]] || [[ \$FIRST_CHR == "3L" ]] || [[ \$FIRST_CHR == "3R" ]]; then
+    # Using safer chromosome detection without end-of-line anchor
+    if [[ \$FIRST_CHR =~ ^[0-9XYM] ]] || [[ \$FIRST_CHR == "2L" ]] || [[ \$FIRST_CHR == "2R" ]] || [[ \$FIRST_CHR == "3L" ]] || [[ \$FIRST_CHR == "3R" ]]; then
         echo "Adding 'chr' prefix to chromosome names..."
-        sed 's/^2L/chr2L/; s/^2R/chr2R/; s/^3L/chr3L/; s/^3R/chr3R/; s/^X$/chrX/; s/^Y$/chrY/; s/^4$/chr4/; s/^M$/chrM/; s/^X\t/chrX\t/; s/^Y\t/chrY\t/; s/^4\t/chr4\t/; s/^M\t/chrM\t/' ${peaks} > ${prefix}_peaks_fixed.bed
+        sed 's/^2L/chr2L/; s/^2R/chr2R/; s/^3L/chr3L/; s/^3R/chr3R/; s/^X\t/chrX\t/; s/^Y\t/chrY\t/; s/^4\t/chr4\t/; s/^M\t/chrM\t/; s/^X\$/chrX/; s/^Y\$/chrY/; s/^4\$/chr4/; s/^M\$/chrM/' ${peaks} > ${prefix}_peaks_fixed.bed
     elif [[ \$FIRST_CHR =~ ^chr ]]; then
         echo "Chromosomes already have 'chr' prefix"
         cp ${peaks} ${prefix}_peaks_fixed.bed
