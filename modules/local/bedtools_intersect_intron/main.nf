@@ -4,8 +4,8 @@ process BEDTOOLS_INTERSECT_INTRON {
 
     conda (params.enable_conda ? "bioconda::bedtools=2.30.0" : null)
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/bedtools:2.30.0--hc088bd4_0' :
-        'quay.io/biocontainers/bedtools:2.30.0--hc088bd4_0' }"
+    'https://depot.galaxyproject.org/singularity/mulled-v2-2f48cc59b03027e31ead6d383fe1b8057785dd24:5d182f583f4696f4c4d9f3be93052811b383341f-0' :
+    'biocontainers/mulled-v2-2f48cc59b03027e31ead6d383fe1b8057785dd24:5d182f583f4696f4c4d9f3be93052811b383341f-0' }"
 
     input:
     tuple val(meta), path(peaks)
@@ -27,7 +27,7 @@ process BEDTOOLS_INTERSECT_INTRON {
     """
     # Process peaks with intron regions using custom script
     # (Script handles bedtools intersection internally)
-    intersect_intron_annotate.py \\
+    $projectDir/bin/intersect_intron_annotate.py \\
         --peaks $peaks \\
         --introns $intron_bed \\
         --intersected ${prefix}.intron_intersected.bed \\

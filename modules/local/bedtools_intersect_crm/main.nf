@@ -4,9 +4,8 @@ process BEDTOOLS_INTERSECT_CRM {
 
     conda (params.enable_conda ? "bioconda::bedtools=2.30.0" : null)
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/bedtools:2.30.0--hc088bd4_0' :
-        'quay.io/biocontainers/bedtools:2.30.0--hc088bd4_0' }"
-
+    'https://depot.galaxyproject.org/singularity/mulled-v2-2f48cc59b03027e31ead6d383fe1b8057785dd24:5d182f583f4696f4c4d9f3be93052811b383341f-0' :
+    'biocontainers/mulled-v2-2f48cc59b03027e31ead6d383fe1b8057785dd24:5d182f583f4696f4c4d9f3be93052811b383341f-0' }"
     input:
     tuple val(meta), path(peaks)
     path crm_bed
@@ -27,7 +26,7 @@ process BEDTOOLS_INTERSECT_CRM {
     """
     # Process peaks with CRM regions using custom script
     # Script filters out 'Unspecified' annotations internally
-    intersect_crm_annotate.py \\
+    $projectDir/bin/intersect_crm_annotate.py \\
         --peaks $peaks \\
         --crm $crm_bed \\
         --intersected ${prefix}.crm_intersected.bed \\
