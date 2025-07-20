@@ -24,13 +24,18 @@ process PREPARE_ANNOTATION_OUTPUT {
     script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
+
     """
+    echo "Starting final annotation output preparation for ${prefix}..."
+    echo "Input files: ${gene_symbol_files}"
+    echo "Consensus peaks: ${consensus_peaks}"
+
     # Prepare final annotation output
     prepare_annotation_output.py \\
         --gene_symbol_files ${gene_symbol_files.join(' ')} \\
-        --consensus_peaks $consensus_peaks \\
-        --output_prefix $prefix \\
-        $args
+        --consensus_peaks ${consensus_peaks} \\
+        --output_prefix ${prefix} \\
+        ${args}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -52,5 +57,3 @@ process PREPARE_ANNOTATION_OUTPUT {
     END_VERSIONS
     """
 }
-
-

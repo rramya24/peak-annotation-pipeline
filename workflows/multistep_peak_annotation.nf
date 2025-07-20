@@ -274,7 +274,7 @@ workflow MULTISTEP_PEAK_ANNOTATION {
         params.intersect_overlap_fraction,
         params.skip_crm,
         params.skip_intron,
-        params.genome,
+        homer_genome,
         ch_lncrna_mirna_mapping,
         params.enable_lncrna_mirna_expansion
     )
