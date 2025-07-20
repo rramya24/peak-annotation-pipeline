@@ -4,8 +4,8 @@
 // Multi-step peak annotation subworkflow
 //
 
-include { BEDTOOLS_INTERSECT as BEDTOOLS_INTERSECT_CRM         } from '../../modules/local/bedtools_intersect_crm/main'
-include { BEDTOOLS_INTERSECT as BEDTOOLS_INTERSECT_INTRON      } from '../../modules/local/bedtools_intersect_intron/main'
+include { BEDTOOLS_INTERSECT_CRM         } from '../../modules/local/bedtools_intersect_crm/main'
+include { BEDTOOLS_INTERSECT_INTRON      } from '../../modules/local/bedtools_intersect_intron/main'
 include { HOMER_ANNOTATEPEAKS                                  } from '../../modules/nf-core/homer/annotatepeaks/main'
 include { PLOT_HOMER_ANNOTATEPEAKS                             } from '../../modules/local/plot_homer_annotatepeaks/main'
 include { PREPARE_ANNOTATION_OUTPUT                            } from '../../modules/local/prepare_annotation_output/main'
