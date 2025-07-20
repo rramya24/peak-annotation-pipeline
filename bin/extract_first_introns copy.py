@@ -3,7 +3,6 @@
 """
 Extract first introns from GTF file.
 Creates BED file with first intron coordinates for each gene.
-Properly preserves FBgn IDs in output.
 """
 
 import argparse
@@ -142,7 +141,7 @@ def find_first_introns(genes):
                 'chrom': gene_info['chrom'],
                 'start': best_intron['start'],
                 'end': best_intron['end'],
-                'gene_id': gene_id,  # Keep full FBgn ID
+                'gene_id': gene_id,
                 'gene_name': gene_info['gene_name'],
                 'strand': gene_info['strand'],
                 'transcript_id': best_intron['transcript_id']
@@ -225,4 +224,4 @@ def main():
 if __name__ == "__main__":
     main()
 
-
+# END OF SCRIPT
