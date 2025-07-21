@@ -37,26 +37,30 @@ temp/
 .DS_Store
 Thumbs.db
 
-# IDE files (optional - you might want to keep some VS Code settings)
+# IDE files
 .vscode/
 .idea/
 
 # Cache
 .cache/
-assets/test_data/annotations/drosophila.gtf
-assets/test_data/annotations/drosophila.gtf
-assets/test_data/annotations/drosophila.gtf
-*.gtf
-assets/test_data/annotations/
-assets/test_data/annotations/drosophila.gtf
-*.gtf
-assets/test_data/annotations/
-nextflow
 
-# Large FASTA reference files
-*.fa
-*.fasta
-*.fa.gz
-*.fasta.gz
-assets/test_data/annotations/Drosophila_melanogaster.BDGP6.54.dna.toplevel.fa
+# Nextflow work directories and cache
+work/
+.nextflow/
+.nextflow.log*
 
+# Large reference files - GTF and FASTA files
+#*.gtf
+#*.fa
+#*.fasta
+#*.fa.gz
+#*.fasta.gz
+
+# Specific large annotation files
+#assets/test_data/annotations/*.gtf
+#assets/test_data/annotations/*.fa
+#assets/test_data/annotations/*.fasta
+#assets/test_data/annotations/Drosophila_melanogaster.BDGP6.54.dna.toplevel.fa
+
+# Keep BED files (CRM and intron files are small and needed)
+# !*.bed files will be tracked by default
