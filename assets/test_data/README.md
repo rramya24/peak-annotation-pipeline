@@ -12,6 +12,8 @@ This directory contains test data files for the multi-step peak annotation pipel
 ### Annotation Files (annotations/)
 - `crm_regions.bed` - Cis-regulatory module coordinates no chr and gene-names converted to fbgn geneids
 - `first_intron_regions.bed` - First intron coordinates no chr and gene name converted to geneids
+- `drosophila_ensembl_114.gtf` - drosophila gtf file ensembl version 114
+- `Drosophila_melanogaster.BDGP6.54.dna.toplevel.fa` - the corresponding fasta file dm6 Ensembl version 114
 
 ## Usage
 
