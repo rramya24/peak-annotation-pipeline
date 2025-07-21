@@ -14,6 +14,7 @@ process EXPAND_TARGETS_LNCRNA {
     output:
     tuple val(meta), path("*.expanded_targets.txt"), emit: expanded_targets
     tuple val(meta), path("*.expansion_log.txt"), emit: log
+    tuple val(meta), path("*.expansion_summary.txt"), emit: summary
     path "versions.yml", emit: versions
 
     when:
@@ -25,10 +26,11 @@ process EXPAND_TARGETS_LNCRNA {
     """
     # Expand target genes with lncRNA-miRNA relationships
     expand_targets_with_lncrna_mirna.py \\
-        --target_genes $target_genes \\
-        --lncrna_mirna_mapping $lncrna_mirna_mapping \\
+        --target-genes $target_genes \\
+        --lncrna-mirna-mapping $lncrna_mirna_mapping \\
         --output ${prefix}.expanded_targets.txt \\
         --log ${prefix}.expansion_log.txt \\
+        --summary ${prefix}.expansion_summary.txt \\
         $args
 
     cat <<-END_VERSIONS > versions.yml

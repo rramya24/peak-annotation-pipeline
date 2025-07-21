@@ -52,3 +52,11 @@ assets/test_data/annotations/drosophila.gtf
 *.gtf
 assets/test_data/annotations/
 nextflow
+
+# Large FASTA reference files
+*.fa
+*.fasta
+*.fa.gz
+*.fasta.gz
+assets/test_data/annotations/Drosophila_melanogaster.BDGP6.54.dna.toplevel.fa
+
