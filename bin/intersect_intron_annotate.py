@@ -3,7 +3,7 @@
 """
 Intersect peaks with intron regions and annotate with gene information.
 Preserves peak names throughout the process.
-Properly extracts FBgn IDs and looks up gene names from GTF.
+extracts FBgn IDs i.e full 4th column of the 1st intron bed file and looks up gene names from GTF.
 """
 
 import argparse
@@ -73,23 +73,11 @@ def load_gene_names_from_gtf(gtf_file):
     return gene_mapping
 
 def extract_fbgn_from_intron_name(intron_name):
-    """Extract FBgn ID from intron name."""
-    # Look for FBgn pattern in the intron name
-    fbgn_match = re.search(r'(FBgn\d+)', intron_name)
-    if fbgn_match:
-        return fbgn_match.group(1)
-
-    # If no FBgn found, try other patterns
-    if '_' in intron_name:
-        # Try splitting and looking for gene-like identifiers
-        parts = intron_name.split('_')
-        for part in parts:
-            if part.startswith('FBgn'):
-                return part
-            # Could add other gene ID patterns here if needed
-
-    # If no recognizable gene ID, use the intron name itself
-    return intron_name
+    """Extract FBgn ID from intron name - for introns, usually the entire name is the gene ID."""
+    # For intron files, the 4th column typically contains just the FBgn ID
+    # so we return the entire name as the gene ID
+    print(f"DEBUG: Using entire intron name '{intron_name}' as gene ID")
+    return intron_name.strip()
 
 def run_bedtools_intersect(peaks_file, intron_file, output_file, overlap_fraction=0.0):
     """Run bedtools intersect and return results."""
@@ -179,7 +167,7 @@ def annotate_intron_intersections(intersections, gene_mapping, output_file):
             intron_name = intersection['intron_name']
             peak_name = intersection['peak_name']
 
-            # Extract FBgn ID from intron name
+            # Extract FBgn ID from intron name (for introns, use the entire name)
             gene_id = extract_fbgn_from_intron_name(intron_name)
 
             # Get gene symbol from GTF mapping, fallback to gene_id
