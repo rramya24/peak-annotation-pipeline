@@ -3,7 +3,6 @@
 """
 Check samplesheet for multi-step peak annotation pipeline.
 Updated to handle simplified samplesheet format without control column.
-FIXED: Now properly handles relative paths from project directory.
 """
 
 import os
@@ -18,25 +17,6 @@ def print_error(error, context='Line', context_str=''):
         error_str = f"ERROR: Please check samplesheet -> {error}\n{context.strip()}: '{context_str.strip()}'"
     print(error_str)
     sys.exit(1)
-
-def resolve_path(file_path):
-    """
-    Resolve file path - handle both absolute and relative paths.
-    For relative paths, resolve from project directory if available.
-    """
-    if os.path.isabs(file_path):
-        return file_path
-
-    # For relative paths, try to resolve from project directory
-    project_dir = os.environ.get('projectDir', os.getcwd())
-    resolved_path = os.path.join(project_dir, file_path)
-
-    # If resolved path exists, use it; otherwise use original
-    if os.path.exists(resolved_path):
-        return resolved_path
-
-    # Fall back to original path
-    return file_path
 
 def check_samplesheet(file_in, file_out):
     """
@@ -86,15 +66,12 @@ def check_samplesheet(file_in, file_out):
         if pd.isna(peaks) or peaks == '':
             print_error("Peaks file path cannot be empty", f"Line {index + 2}")
 
-        # FIXED: Resolve relative paths properly
-        resolved_peaks_path = resolve_path(peaks)
-
-        if not os.path.exists(resolved_peaks_path):
+        if not os.path.exists(peaks):
             print_error(f"Peaks file does not exist: {peaks}", f"Line {index + 2}")
 
         # Check if peaks file is in BED format (basic check)
         try:
-            with open(resolved_peaks_path, 'r') as f:
+            with open(peaks, 'r') as f:
                 first_line = f.readline().strip()
                 if first_line and not first_line.startswith('#'):
                     parts = first_line.split('\t')
