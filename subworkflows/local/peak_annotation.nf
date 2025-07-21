@@ -63,8 +63,8 @@ workflow PEAK_ANNOTATION {
     // Step 3: HOMER annotation
     HOMER_ANNOTATEPEAKS (
         ch_peaks_for_homer,   // tuple val(meta), path(peak)
-        file(genome),         // path fasta
-        file(gtf)            // path gtf
+        genome,         // path fasta
+        gtf            // path gtf
     )
     ch_versions = ch_versions.mix(HOMER_ANNOTATEPEAKS.out.versions)
     ch_homer_annotation = HOMER_ANNOTATEPEAKS.out.txt

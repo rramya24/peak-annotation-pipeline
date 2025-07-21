@@ -2,7 +2,7 @@ process HOMER_ANNOTATEPEAKS {
     tag "$meta.id"
     label 'process_medium'
 
-    conda "${moduleDir}/environment.yml"
+    conda (params.enable_conda ? "bioconda::homer=4.11" : null)
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/homer:4.11--pl526hc9558a2_3' :
         'biocontainers/homer:4.11--pl526hc9558a2_3' }"

@@ -23,16 +23,9 @@ if (params.input) {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-// Ensure HOMER genome parameter is properly set
-def homer_genome = params.homer_genome ?: params.genome ?: 'dm6'
+// Using FASTA file approach for HOMER annotation
+log.info "HOMER will use provided FASTA file: ${params.genome}"
 
-// Validate HOMER genome compatibility
-def valid_homer_genomes = ['dm6', 'dm3', 'hg38', 'hg19', 'mm10', 'mm9']
-if (!valid_homer_genomes.contains(homer_genome)) {
-    log.warn "WARNING: HOMER genome '${homer_genome}' may not be pre-installed. HOMER will attempt to download it."
-}
-
-log.info "HOMER genome set to: ${homer_genome}"
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -274,7 +267,7 @@ workflow MULTISTEP_PEAK_ANNOTATION {
         params.intersect_overlap_fraction,
         params.skip_crm,
         params.skip_intron,
-        homer_genome,
+        file(params.genome), // ← Pass FASTA file instead of "dm6" string
         ch_lncrna_mirna_mapping,
         params.enable_lncrna_mirna_expansion
     )
