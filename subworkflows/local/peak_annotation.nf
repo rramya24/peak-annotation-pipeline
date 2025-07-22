@@ -35,6 +35,7 @@ workflow PEAK_ANNOTATION {
         BEDTOOLS_INTERSECT_CRM (
             consensus_peaks,
             crm_bed,
+            gtf,               // Pass GTF for gene name lookup
             overlap_fraction
         )
         ch_versions = ch_versions.mix(BEDTOOLS_INTERSECT_CRM.out.versions)
@@ -44,13 +45,14 @@ workflow PEAK_ANNOTATION {
         ch_crm_annotation = ch_sample_meta.map { meta -> [meta, file("NO_FILE_CRM")] }
     }
 
-    // Step 2: Intron annotation
+    // Step 2: Intron annotation (gets non-intersected peaks from CRM step)
     ch_peaks_for_homer = ch_peaks_for_intron
 
     if (!skip_intron && intron_bed) {
         BEDTOOLS_INTERSECT_INTRON (
             ch_peaks_for_intron,
             intron_bed,
+            gtf,               // Pass GTF for gene name lookup
             overlap_fraction
         )
         ch_versions = ch_versions.mix(BEDTOOLS_INTERSECT_INTRON.out.versions)
@@ -60,11 +62,11 @@ workflow PEAK_ANNOTATION {
         ch_intron_annotation = ch_sample_meta.map { meta -> [meta, file("NO_FILE_INTRON")] }
     }
 
-    // Step 3: HOMER annotation
+    // Step 3: HOMER annotation (gets non-intersected peaks from intron step)
     HOMER_ANNOTATEPEAKS (
         ch_peaks_for_homer,   // tuple val(meta), path(peak)
-        genome,         // path fasta
-        gtf            // path gtf
+        genome,               // path fasta
+        gtf                   // path gtf
     )
     ch_versions = ch_versions.mix(HOMER_ANNOTATEPEAKS.out.versions)
     ch_homer_annotation = HOMER_ANNOTATEPEAKS.out.txt

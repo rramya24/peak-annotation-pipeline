@@ -10,12 +10,13 @@ process BEDTOOLS_INTERSECT_INTRON {
     input:
     tuple val(meta), path(peaks)
     path intron_bed
+    path gtf
     val overlap_fraction
 
     output:
     tuple val(meta), path("*.intron_intersected.bed"), emit: intersected
     tuple val(meta), path("*.intron_non_intersected.bed"), emit: non_intersected
-    tuple val(meta), path("*.intron_annotation.bed"), emit: annotation
+    tuple val(meta), path("*.intron_annotation.tsv"), emit: annotation
     path "versions.yml", emit: versions
 
     when:
@@ -24,22 +25,17 @@ process BEDTOOLS_INTERSECT_INTRON {
     script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
+    def gtf_param = gtf ? "--gtf $gtf" : ""
     """
-    # Process peaks with intron regions using custom script
-    # (Script handles bedtools intersection internally)
+    # Single Python script does everything
     $projectDir/bin/intersect_intron_annotate.py \\
         --peaks $peaks \\
         --introns $intron_bed \\
+        $gtf_param \\
         --intersected ${prefix}.intron_intersected.bed \\
-        --annotated ${prefix}.intron_annotation.bed \\
-        --overlap-fraction $overlap_fraction \\
-
-    # Create non-intersected file by finding peaks not in intersected
-    bedtools intersect \\
-        -a $peaks \\
-        -b $intron_bed \\
-        -v \\
-        > ${prefix}.intron_non_intersected.bed
+        --annotated ${prefix}.intron_annotation.tsv \\
+        --non-intersected ${prefix}.intron_non_intersected.bed \\
+        --overlap-fraction $overlap_fraction
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -53,7 +49,7 @@ process BEDTOOLS_INTERSECT_INTRON {
     """
     touch ${prefix}.intron_intersected.bed
     touch ${prefix}.intron_non_intersected.bed
-    touch ${prefix}.intron_annotation.bed
+    touch ${prefix}.intron_annotation.tsv
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -62,5 +58,3 @@ process BEDTOOLS_INTERSECT_INTRON {
     END_VERSIONS
     """
 }
-
-
