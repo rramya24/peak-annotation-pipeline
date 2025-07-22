@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
 """
-Intersect peaks with intron regions and annotate with gene information.
-Preserves peak names throughout the process.
-Extracts FBgn IDs from full 4th column of the intron bed file and looks up gene names from GTF.
+Intersect peaks with CRM regions and annotate with gene information.
+FILTERS OUT 'Unspecified' annotations based on prefix before underscore.
+Properly extracts FBgn IDs and creates non-intersected + unspecified peaks file.
 Preprocesses input files to use only first 4 columns.
 """
 
@@ -73,13 +73,13 @@ def load_gene_names_from_gtf(gtf_file):
 
     return gene_mapping
 
-def extract_fbgn_from_intron_name(intron_name):
+def extract_fbgn_from_crm_name(crm_name):
     """
-    Extract FBgn ID from intron name - for introns, the entire name IS the gene ID.
-    Keep full FBgn format (no underscore splitting for introns).
+    Extract gene ID from CRM name by taking everything before the first underscore.
+    FBgn0004395_AGS001 -> FBgn0004395
+    Unspecified_1195 -> Unspecified
     """
-    # For intron files, the 4th column typically contains the full FBgn ID
-    gene_id = intron_name.strip()
+    gene_id = crm_name.split('_')[0]
     return gene_id
 
 def preprocess_bed_file(input_file, temp_file_prefix):
@@ -117,15 +117,15 @@ def preprocess_bed_file(input_file, temp_file_prefix):
         os.unlink(temp_file.name)
         return None
 
-def run_bedtools_intersect_and_categorize(peaks_file, intron_file, intersected_output, non_intersected_output, overlap_fraction=0.0):
-    """Run bedtools intersect and categorize peaks."""
+def run_bedtools_intersect_and_categorize(peaks_file, crm_file, intersected_output, non_intersected_output, overlap_fraction=0.0):
+    """Run bedtools intersect and categorize peaks into specified/unspecified/non-intersected."""
     try:
         # Preprocess input files to ensure only first 4 columns are used
         print("Preprocessing input files to use first 4 columns only...")
         temp_peaks = preprocess_bed_file(peaks_file, "peaks_4col_")
-        temp_introns = preprocess_bed_file(intron_file, "introns_4col_")
+        temp_crm = preprocess_bed_file(crm_file, "crm_4col_")
 
-        if not temp_peaks or not temp_introns:
+        if not temp_peaks or not temp_crm:
             print("Error: Failed to preprocess input files")
             return False, [], []
 
@@ -137,7 +137,7 @@ def run_bedtools_intersect_and_categorize(peaks_file, intron_file, intersected_o
         cmd = [
             'bedtools', 'intersect',
             '-a', temp_peaks,
-            '-b', temp_introns,
+            '-b', temp_crm,
             '-wa', '-wb'  # Write both A and B entries
         ]
 
@@ -154,10 +154,10 @@ def run_bedtools_intersect_and_categorize(peaks_file, intron_file, intersected_o
             print(f"Error running bedtools intersect: {result.stderr}")
             # Clean up temp files
             os.unlink(temp_peaks)
-            os.unlink(temp_introns)
+            os.unlink(temp_crm)
             return False, [], []
 
-        # Read all peaks first
+        # Read all peaks first to know which ones exist
         all_peaks = {}
         with open(temp_peaks, 'r') as f:
             for line in f:
@@ -170,9 +170,9 @@ def run_bedtools_intersect_and_categorize(peaks_file, intron_file, intersected_o
 
         print(f"Total input peaks: {len(all_peaks)}")
 
-        # Read and process intersections
-        intron_intersections = []
-        peaks_with_intron = set()
+        # Read and categorize intersections
+        specified_intersections = []
+        peaks_with_specified_crm = set()
 
         with open(temp_output, 'r') as f:
             for line_num, line in enumerate(f, 1):
@@ -184,71 +184,76 @@ def run_bedtools_intersect_and_categorize(peaks_file, intron_file, intersected_o
                 if len(parts) != 8:
                     continue
 
-                # Extract fields - both files have 4 columns each
+                # Extract fields
                 peak_chr, peak_start, peak_end, peak_name = parts[0], parts[1], parts[2], parts[3]
-                intron_chr, intron_start, intron_end, intron_name = parts[4], parts[5], parts[6], parts[7]
+                crm_chr, crm_start, crm_end, crm_name = parts[4], parts[5], parts[6], parts[7]
 
-                # Show first few for verification
-                if line_num <= 5:
-                    print(f"Intersection {line_num}: Peak='{peak_name}', Intron='{intron_name}'")
+                # Extract the prefix before the first underscore for filtering
+                crm_prefix = crm_name.split('_')[0]
 
-                peaks_with_intron.add(peak_name)
-                intron_intersections.append({
-                    'peak_chr': peak_chr,
-                    'peak_start': peak_start,
-                    'peak_end': peak_end,
-                    'peak_name': peak_name,
-                    'intron_chr': intron_chr,
-                    'intron_start': intron_start,
-                    'intron_end': intron_end,
-                    'intron_name': intron_name
-                })
+                # Filter based on prefix
+                if crm_prefix.lower() == 'unspecified':
+                    # Skip unspecified - these peaks will go to next step
+                    continue
+                else:
+                    # This is a specified CRM (should be FBgn format)
+                    peaks_with_specified_crm.add(peak_name)
+                    specified_intersections.append({
+                        'peak_chr': peak_chr,
+                        'peak_start': peak_start,
+                        'peak_end': peak_end,
+                        'peak_name': peak_name,
+                        'crm_chr': crm_chr,
+                        'crm_start': crm_start,
+                        'crm_end': crm_end,
+                        'crm_name': crm_name
+                    })
 
-        # Create peaks for next step: non-intersected
+        # Create peaks for next step: non-intersected + unspecified
         peaks_for_next_step = []
 
         for peak_name, peak_line in all_peaks.items():
-            if peak_name not in peaks_with_intron:
-                # This peak didn't intersect any introns
+            if peak_name not in peaks_with_specified_crm:
+                # This peak either: 1) didn't intersect any CRM, or 2) only intersected unspecified CRMs
                 peaks_for_next_step.append(peak_line)
 
-        print(f"Peaks with intron intersections: {len(peaks_with_intron)}")
-        print(f"Peaks for next step (non-intersected): {len(peaks_for_next_step)}")
+        print(f"Peaks with specified CRMs: {len(peaks_with_specified_crm)}")
+        print(f"Peaks for next step (non-intersected + unspecified): {len(peaks_for_next_step)}")
 
-        # Write intron intersections file (for annotation)
+        # Write specified intersections file (for annotation)
         with open(intersected_output, 'w') as f:
-            f.write("peak_chr\tpeak_start\tpeak_end\tpeak_name\tintron_chr\tintron_start\tintron_end\tintron_name\n")
-            for intersection in intron_intersections:
+            f.write("peak_chr\tpeak_start\tpeak_end\tpeak_name\tcrm_chr\tcrm_start\tcrm_end\tcrm_name\n")
+            for intersection in specified_intersections:
                 f.write(f"{intersection['peak_chr']}\t{intersection['peak_start']}\t{intersection['peak_end']}\t{intersection['peak_name']}\t")
-                f.write(f"{intersection['intron_chr']}\t{intersection['intron_start']}\t{intersection['intron_end']}\t{intersection['intron_name']}\n")
+                f.write(f"{intersection['crm_chr']}\t{intersection['crm_start']}\t{intersection['crm_end']}\t{intersection['crm_name']}\n")
 
-        # Write non-intersected peaks file (for next step)
+        # Write non-intersected + unspecified peaks file (for next step)
         with open(non_intersected_output, 'w') as f:
             for peak_line in peaks_for_next_step:
                 f.write(peak_line + '\n')
 
         # Clean up temporary files
         os.unlink(temp_peaks)
-        os.unlink(temp_introns)
+        os.unlink(temp_crm)
         os.unlink(temp_output)
 
-        return True, intron_intersections, peaks_for_next_step
+        return True, specified_intersections, peaks_for_next_step
 
     except Exception as e:
         print(f"Error in bedtools intersect: {e}")
         return False, [], []
 
-def annotate_intron_intersections(intersections, gene_mapping, output_file):
-    """Annotate intron intersections with gene information."""
+def annotate_crm_intersections(intersections, gene_mapping, output_file):
+    """Annotate CRM intersections with gene information, properly extracting FBgn IDs."""
     try:
-        # Create gene annotations from intron regions
+        # Create gene annotations from CRM regions
         gene_annotations = {}
         for intersection in intersections:
-            intron_name = intersection['intron_name']
+            crm_name = intersection['crm_name']
             peak_name = intersection['peak_name']
 
-            # Extract FBgn ID from intron name - keep full FBgn format
-            gene_id = extract_fbgn_from_intron_name(intron_name)
+            # Extract FBgn ID from CRM name - keep full FBgn format
+            gene_id = extract_fbgn_from_crm_name(crm_name)
 
             # Get gene symbol from GTF mapping, fallback to gene_id
             gene_symbol = gene_mapping.get(gene_id, gene_id)
@@ -257,46 +262,46 @@ def annotate_intron_intersections(intersections, gene_mapping, output_file):
                 gene_annotations[gene_id] = {
                     'gene_id': gene_id,
                     'gene_symbol': gene_symbol,
-                    'annotation_type': 'intron',
+                    'annotation_type': 'crm',
                     'peak_names': [],
-                    'intron_regions': []
+                    'crm_regions': []
                 }
 
             gene_annotations[gene_id]['peak_names'].append(peak_name)
-            gene_annotations[gene_id]['intron_regions'].append(intron_name)
+            gene_annotations[gene_id]['crm_regions'].append(crm_name)
 
         # Write annotated results
         with open(output_file, 'w') as f:
-            f.write("gene_id\tgene_symbol\tannotation_type\tnum_peaks\tpeak_names\tintron_regions\n")
+            f.write("gene_id\tgene_symbol\tannotation_type\tnum_peaks\tpeak_names\tcrm_regions\n")
 
             for gene_id, annotation in gene_annotations.items():
                 gene_id_formatted = annotation['gene_id']
                 gene_symbol = annotation['gene_symbol']
                 annotation_type = annotation['annotation_type']
-                num_peaks = len(set(annotation['peak_names']))  # Remove duplicates
+                num_peaks = len(set(annotation['peak_names']))
                 peak_names = ','.join(sorted(set(annotation['peak_names'])))
-                intron_regions = ','.join(sorted(set(annotation['intron_regions'])))
+                crm_regions = ','.join(sorted(set(annotation['crm_regions'])))
 
-                f.write(f"{gene_id_formatted}\t{gene_symbol}\t{annotation_type}\t{num_peaks}\t{peak_names}\t{intron_regions}\n")
+                f.write(f"{gene_id_formatted}\t{gene_symbol}\t{annotation_type}\t{num_peaks}\t{peak_names}\t{crm_regions}\n")
 
-        print(f"Annotated {len(gene_annotations)} genes from intron intersections")
+        print(f"Annotated {len(gene_annotations)} genes from specified CRM intersections")
         return True
 
     except Exception as e:
-        print(f"Error in intron annotation: {e}")
+        print(f"Error in CRM annotation: {e}")
         return False
 
 def main():
     """Main function."""
     parser = argparse.ArgumentParser(
-        description='Intersect peaks with intron regions and annotate with gene information'
+        description='Intersect peaks with CRM regions and annotate with gene information (filters unspecified by prefix)'
     )
     parser.add_argument('--peaks', required=True, help='Input peaks file (BED format)')
-    parser.add_argument('--introns', required=True, help='Input intron regions file (BED format)')
+    parser.add_argument('--crm', required=True, help='Input CRM regions file (BED format)')
     parser.add_argument('--gtf', help='GTF file for gene name lookup (optional)')
-    parser.add_argument('--intersected', required=True, help='Output intersected peaks file')
+    parser.add_argument('--intersected', required=True, help='Output intersected peaks file (specified CRMs only)')
     parser.add_argument('--annotated', required=True, help='Output annotated genes file')
-    parser.add_argument('--non-intersected', required=True, help='Output non-intersected peaks file')
+    parser.add_argument('--non-intersected', required=True, help='Output non-intersected + unspecified peaks file')
     parser.add_argument('--overlap-fraction', type=float, default=0.0, help='Minimum overlap fraction (default: 0.0)')
 
     args = parser.parse_args()
@@ -306,8 +311,8 @@ def main():
         print(f"Error: Peaks file not found: {args.peaks}")
         sys.exit(1)
 
-    if not os.path.exists(args.introns):
-        print(f"Error: Intron file not found: {args.introns}")
+    if not os.path.exists(args.crm):
+        print(f"Error: CRM file not found: {args.crm}")
         sys.exit(1)
 
     try:
@@ -316,29 +321,29 @@ def main():
         if args.gtf:
             gene_mapping = load_gene_names_from_gtf(args.gtf)
 
-        print("Intersecting peaks with intron regions...")
-        success, intersections, peaks_for_next_step = run_bedtools_intersect_and_categorize(
-            args.peaks, args.introns, args.intersected, args.non_intersected, args.overlap_fraction
+        print("Intersecting peaks with CRM regions and categorizing...")
+        success, specified_intersections, peaks_for_next_step = run_bedtools_intersect_and_categorize(
+            args.peaks, args.crm, args.intersected, args.non_intersected, args.overlap_fraction
         )
 
         if not success:
-            print("Error: Failed to intersect peaks with intron regions")
+            print("Error: Failed to intersect peaks with CRM regions")
             sys.exit(1)
 
-        if intersections:
-            print("Annotating intron intersections...")
-            success = annotate_intron_intersections(intersections, gene_mapping, args.annotated)
+        if specified_intersections:
+            print("Annotating specified CRM intersections...")
+            success = annotate_crm_intersections(specified_intersections, gene_mapping, args.annotated)
             if not success:
-                print("Error: Failed to annotate intron intersections")
+                print("Error: Failed to annotate CRM intersections")
                 sys.exit(1)
         else:
             # Create empty annotation file
             with open(args.annotated, 'w') as f:
-                f.write("gene_id\tgene_symbol\tannotation_type\tnum_peaks\tpeak_names\tintron_regions\n")
-            print("No intron intersections found")
+                f.write("gene_id\tgene_symbol\tannotation_type\tnum_peaks\tpeak_names\tcrm_regions\n")
+            print("No specified CRM intersections found")
 
-        print("Intron intersection and annotation completed successfully!")
-        print(f"Peaks for next step: {len(peaks_for_next_step)} (non-intersected)")
+        print("CRM intersection and annotation completed successfully!")
+        print(f"Peaks for next step: {len(peaks_for_next_step)} (non-intersected + unspecified)")
 
     except Exception as e:
         print(f"Error: {e}")

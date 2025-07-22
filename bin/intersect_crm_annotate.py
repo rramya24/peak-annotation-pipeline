@@ -1,10 +1,11 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 """
 Intersect peaks with CRM regions and annotate with gene information.
-FILTERS OUT 'Unspecified' annotations based on prefix before underscore.
-Properly extracts FBgn IDs and creates non-intersected + unspecified peaks file.
-Preprocesses input files to use only first 4 columns.
+Handles each intersection independently - peaks can be both annotated AND passed to next step.
+- FBgn intersections → annotation
+- Unspecified intersections → peak goes to next step
+- Same peak can have both outcomes
 """
 
 import argparse
@@ -118,7 +119,7 @@ def preprocess_bed_file(input_file, temp_file_prefix):
         return None
 
 def run_bedtools_intersect_and_categorize(peaks_file, crm_file, intersected_output, non_intersected_output, overlap_fraction=0.0):
-    """Run bedtools intersect and categorize peaks into specified/unspecified/non-intersected."""
+    """Run bedtools intersect and handle each intersection independently."""
     try:
         # Preprocess input files to ensure only first 4 columns are used
         print("Preprocessing input files to use first 4 columns only...")
@@ -157,7 +158,7 @@ def run_bedtools_intersect_and_categorize(peaks_file, crm_file, intersected_outp
             os.unlink(temp_crm)
             return False, [], []
 
-        # Read all peaks first to know which ones exist
+        # Read all peaks first
         all_peaks = {}
         with open(temp_peaks, 'r') as f:
             for line in f:
@@ -170,9 +171,10 @@ def run_bedtools_intersect_and_categorize(peaks_file, crm_file, intersected_outp
 
         print(f"Total input peaks: {len(all_peaks)}")
 
-        # Read and categorize intersections
-        specified_intersections = []
-        peaks_with_specified_crm = set()
+        # Process intersections independently
+        specified_intersections = []      # For annotation (FBgn intersections)
+        peaks_with_unspecified = set()    # Peaks that intersected unspecified CRMs
+        peaks_with_no_crm = set()         # Peaks that never intersected any CRM
 
         with open(temp_output, 'r') as f:
             for line_num, line in enumerate(f, 1):
@@ -188,37 +190,53 @@ def run_bedtools_intersect_and_categorize(peaks_file, crm_file, intersected_outp
                 peak_chr, peak_start, peak_end, peak_name = parts[0], parts[1], parts[2], parts[3]
                 crm_chr, crm_start, crm_end, crm_name = parts[4], parts[5], parts[6], parts[7]
 
-                # Extract the prefix before the first underscore for filtering
+                # Show first few for verification
+                if line_num <= 5:
+                    print(f"Intersection {line_num}: Peak='{peak_name}', CRM='{crm_name}'")
+
+                # Handle each intersection independently
                 crm_prefix = crm_name.split('_')[0]
 
-                # Filter based on prefix
                 if crm_prefix.lower() == 'unspecified':
-                    # Skip unspecified - these peaks will go to next step
-                    continue
-                else:
-                    # This is a specified CRM (should be FBgn format)
-                    peaks_with_specified_crm.add(peak_name)
-                    specified_intersections.append({
-                        'peak_chr': peak_chr,
-                        'peak_start': peak_start,
-                        'peak_end': peak_end,
-                        'peak_name': peak_name,
-                        'crm_chr': crm_chr,
-                        'crm_start': crm_start,
-                        'crm_end': crm_end,
-                        'crm_name': crm_name
-                    })
+                    # This peak intersected an unspecified CRM - mark for next step
+                    peaks_with_unspecified.add(peak_name)
+                    print(f"Peak '{peak_name}' intersects unspecified CRM: {crm_name} → goes to next step")
 
-        # Create peaks for next step: non-intersected + unspecified
+                else:
+                    # This peak intersected a specified CRM - add to annotation
+                    intersection_data = {
+                        'peak_chr': peak_chr, 'peak_start': peak_start, 'peak_end': peak_end, 'peak_name': peak_name,
+                        'crm_chr': crm_chr, 'crm_start': crm_start, 'crm_end': crm_end, 'crm_name': crm_name
+                    }
+                    specified_intersections.append(intersection_data)
+                    print(f"Peak '{peak_name}' intersects specified CRM: {crm_name} → gets annotated")
+
+        # Find peaks that never intersected any CRM
+        intersected_peak_names = set()
+        with open(temp_output, 'r') as f:
+            for line in f:
+                if line.strip():
+                    parts = line.split('\t')
+                    if len(parts) >= 4:
+                        intersected_peak_names.add(parts[3])
+
+        # Peaks with no CRM intersections at all
+        for peak_name in all_peaks:
+            if peak_name not in intersected_peak_names:
+                peaks_with_no_crm.add(peak_name)
+
+        # Create non-intersected file: unspecified + no CRM intersections
         peaks_for_next_step = []
 
         for peak_name, peak_line in all_peaks.items():
-            if peak_name not in peaks_with_specified_crm:
-                # This peak either: 1) didn't intersect any CRM, or 2) only intersected unspecified CRMs
+            if peak_name in peaks_with_unspecified or peak_name in peaks_with_no_crm:
                 peaks_for_next_step.append(peak_line)
 
-        print(f"Peaks with specified CRMs: {len(peaks_with_specified_crm)}")
-        print(f"Peaks for next step (non-intersected + unspecified): {len(peaks_for_next_step)}")
+        print(f"\nSummary:")
+        print(f"  - Specified CRM intersections for annotation: {len(specified_intersections)}")
+        print(f"  - Peaks with unspecified CRM intersections: {len(peaks_with_unspecified)}")
+        print(f"  - Peaks with no CRM intersections: {len(peaks_with_no_crm)}")
+        print(f"  - Total peaks for next step: {len(peaks_for_next_step)}")
 
         # Write specified intersections file (for annotation)
         with open(intersected_output, 'w') as f:
@@ -227,7 +245,7 @@ def run_bedtools_intersect_and_categorize(peaks_file, crm_file, intersected_outp
                 f.write(f"{intersection['peak_chr']}\t{intersection['peak_start']}\t{intersection['peak_end']}\t{intersection['peak_name']}\t")
                 f.write(f"{intersection['crm_chr']}\t{intersection['crm_start']}\t{intersection['crm_end']}\t{intersection['crm_name']}\n")
 
-        # Write non-intersected + unspecified peaks file (for next step)
+        # Write non-intersected peaks file (for next step)
         with open(non_intersected_output, 'w') as f:
             for peak_line in peaks_for_next_step:
                 f.write(peak_line + '\n')
@@ -294,7 +312,7 @@ def annotate_crm_intersections(intersections, gene_mapping, output_file):
 def main():
     """Main function."""
     parser = argparse.ArgumentParser(
-        description='Intersect peaks with CRM regions and annotate with gene information (filters unspecified by prefix)'
+        description='Intersect peaks with CRM regions - independent intersection handling'
     )
     parser.add_argument('--peaks', required=True, help='Input peaks file (BED format)')
     parser.add_argument('--crm', required=True, help='Input CRM regions file (BED format)')
@@ -321,7 +339,7 @@ def main():
         if args.gtf:
             gene_mapping = load_gene_names_from_gtf(args.gtf)
 
-        print("Intersecting peaks with CRM regions and categorizing...")
+        print("Intersecting peaks with CRM regions (independent handling)...")
         success, specified_intersections, peaks_for_next_step = run_bedtools_intersect_and_categorize(
             args.peaks, args.crm, args.intersected, args.non_intersected, args.overlap_fraction
         )
