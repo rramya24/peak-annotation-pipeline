@@ -1,6 +1,7 @@
 process PREPARE_ANNOTATION_OUTPUT {
     tag "$meta.id"
     label 'process_single'
+    publishDir "${params.outdir}/final_targets", mode: params.publish_dir_mode
 
     conda (params.enable_conda ? "conda-forge::python=3.9" : null)
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -10,12 +11,21 @@ process PREPARE_ANNOTATION_OUTPUT {
     input:
     tuple val(meta), path(gene_symbol_files)
     tuple val(meta2), path(consensus_peaks)
+    path(gtf_file)
+    path(lncrna_mirna_mapping), optional: true
 
     output:
-    tuple val(meta), path("*.annotation_report.html"), emit: report
+    tuple val(meta), path("*.raw_targets.tsv"), emit: raw_targets
+    tuple val(meta), path("*.raw_targets_detailed.tsv"), emit: raw_detailed
+    tuple val(meta), path("*.exon_filtered_targets.tsv"), emit: exon_filtered_targets
+    tuple val(meta), path("*.exon_filtered_targets_detailed.tsv"), emit: exon_filtered_detailed
+    tuple val(meta), path("*.biotype_filtered_targets.tsv"), emit: biotype_filtered_targets
+    tuple val(meta), path("*.biotype_filtered_targets_detailed.tsv"), emit: biotype_filtered_detailed
+    tuple val(meta), path("*.final_putative_targets.tsv"), emit: final_targets
+    tuple val(meta), path("*.final_putative_targets_detailed.tsv"), emit: final_detailed
     tuple val(meta), path("*.all_target_genes.txt"), emit: all_genes
-    tuple val(meta), path("*.peak_annotation_summary.txt"), emit: summary
-    tuple val(meta), path("*.mqc.tsv"), emit: multiqc_files
+    tuple val(meta), path("*.filtering_summary.txt"), emit: summary
+    tuple val(meta), path("*.lncrna_mirna_expansion.log"), emit: expansion_log, optional: true
     path "versions.yml", emit: versions
 
     when:
@@ -26,14 +36,18 @@ process PREPARE_ANNOTATION_OUTPUT {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    echo "Starting final annotation output preparation for ${prefix}..."
+    echo "Starting final annotation output preparation with multiple filtering levels for ${prefix}..."
     echo "Input files: ${gene_symbol_files}"
     echo "Consensus peaks: ${consensus_peaks}"
+    echo "GTF file: ${gtf_file}"
+    echo "lncRNA-miRNA mapping: ${lncrna_mirna_mapping ?: 'Not provided'}"
 
-    # Prepare final annotation output
+    # Prepare final annotation output with multiple filtering levels and lncRNA-miRNA expansion
     prepare_annotation_output.py \\
         --gene_symbol_files ${gene_symbol_files.join(' ')} \\
         --consensus_peaks ${consensus_peaks} \\
+        --gtf_file ${gtf_file} \\
+        ${lncrna_mirna_mapping ? "--lncrna_mirna_mapping ${lncrna_mirna_mapping}" : ""} \\
         --output_prefix ${prefix} \\
         ${args}
 
@@ -46,10 +60,17 @@ process PREPARE_ANNOTATION_OUTPUT {
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
-    touch ${prefix}.annotation_report.html
+    touch ${prefix}.raw_targets.tsv
+    touch ${prefix}.raw_targets_detailed.tsv
+    touch ${prefix}.exon_filtered_targets.tsv
+    touch ${prefix}.exon_filtered_targets_detailed.tsv
+    touch ${prefix}.biotype_filtered_targets.tsv
+    touch ${prefix}.biotype_filtered_targets_detailed.tsv
+    touch ${prefix}.final_putative_targets.tsv
+    touch ${prefix}.final_putative_targets_detailed.tsv
     touch ${prefix}.all_target_genes.txt
-    touch ${prefix}.peak_annotation_summary.txt
-    touch ${prefix}.mqc.tsv
+    touch ${prefix}.filtering_summary.txt
+    touch ${prefix}.lncrna_mirna_expansion.log
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

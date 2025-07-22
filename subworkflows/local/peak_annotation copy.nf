@@ -6,6 +6,7 @@ include { BEDTOOLS_INTERSECT_CRM     } from '../../modules/local/bedtools_inters
 include { BEDTOOLS_INTERSECT_INTRON  } from '../../modules/local/bedtools_intersect_intron/main'
 include { HOMER_ANNOTATEPEAKS        } from '../../modules/nf-core/homer/annotatepeaks/main'
 include { PREPARE_ANNOTATION_OUTPUT  } from '../../modules/local/prepare_annotation_output/main'
+include { EXPAND_TARGETS_LNCRNA      } from '../../modules/local/expand_targets_lncrna/main'
 
 workflow PEAK_ANNOTATION {
 
@@ -70,7 +71,7 @@ workflow PEAK_ANNOTATION {
     ch_versions = ch_versions.mix(HOMER_ANNOTATEPEAKS.out.versions)
     ch_homer_annotation = HOMER_ANNOTATEPEAKS.out.txt
 
-    // Step 4: Prepare all annotation files for final output
+    // Step 4: Final output
     ch_all_annotations = ch_sample_meta
         .join(ch_crm_annotation, by: 0, remainder: true)
         .join(ch_intron_annotation, by: 0, remainder: true)
@@ -79,41 +80,35 @@ workflow PEAK_ANNOTATION {
             [meta, [crm_file, intron_file, homer_file]]
         }
 
-    // Step 5: Final annotation output with multiple filtering levels and lncRNA-miRNA expansion
     PREPARE_ANNOTATION_OUTPUT (
-        ch_all_annotations,    // tuple val(meta), path(gene_symbol_files)
-        consensus_peaks,       // tuple val(meta2), path(consensus_peaks)
-        gtf,                   // path(gtf_file) - ADDED
-        lncrna_mirna_mapping   // path(lncrna_mirna_mapping), optional: true - ADDED
+        ch_all_annotations,
+        consensus_peaks
     )
     ch_versions = ch_versions.mix(PREPARE_ANNOTATION_OUTPUT.out.versions)
 
+    // Step 5: lncRNA expansion
+    ch_expanded_targets = PREPARE_ANNOTATION_OUTPUT.out.all_genes
+    ch_expansion_log = Channel.empty()
+
+    if (enable_lncrna_expansion && lncrna_mirna_mapping) {
+        EXPAND_TARGETS_LNCRNA (
+            PREPARE_ANNOTATION_OUTPUT.out.all_genes,
+            lncrna_mirna_mapping
+        )
+        ch_versions = ch_versions.mix(EXPAND_TARGETS_LNCRNA.out.versions)
+        ch_expansion_log = EXPAND_TARGETS_LNCRNA.out.log
+        ch_expanded_targets = EXPAND_TARGETS_LNCRNA.out.expanded_targets
+    }
+
     emit:
-    // Main target outputs
-    final_targets      = PREPARE_ANNOTATION_OUTPUT.out.final_targets
-    final_detailed     = PREPARE_ANNOTATION_OUTPUT.out.final_detailed
-
-    // Alternative filtering levels
-    raw_targets        = PREPARE_ANNOTATION_OUTPUT.out.raw_targets
-    raw_detailed       = PREPARE_ANNOTATION_OUTPUT.out.raw_detailed
-    exon_filtered_targets = PREPARE_ANNOTATION_OUTPUT.out.exon_filtered_targets
-    exon_filtered_detailed = PREPARE_ANNOTATION_OUTPUT.out.exon_filtered_detailed
-    biotype_filtered_targets = PREPARE_ANNOTATION_OUTPUT.out.biotype_filtered_targets
-    biotype_filtered_detailed = PREPARE_ANNOTATION_OUTPUT.out.biotype_filtered_detailed
-
-    // Legacy and summary outputs
-    target_genes       = PREPARE_ANNOTATION_OUTPUT.out.all_genes  // Legacy compatibility
-    final_report       = PREPARE_ANNOTATION_OUTPUT.out.final_targets  // Use main output as report
+    target_genes       = ch_expanded_targets
+    final_report       = PREPARE_ANNOTATION_OUTPUT.out.report
     summary_log        = PREPARE_ANNOTATION_OUTPUT.out.summary
-    expansion_log      = PREPARE_ANNOTATION_OUTPUT.out.expansion_log
-
-    // Individual annotation outputs
+    expansion_log      = ch_expansion_log
     crm_annotation     = ch_crm_annotation
     intron_annotation  = ch_intron_annotation
     homer_annotation   = ch_homer_annotation
-
-    // Other outputs
     homer_plots        = Channel.empty()
-    multiqc_files      = Channel.empty()  // Updated process doesn't have multiqc_files output
+    multiqc_files      = PREPARE_ANNOTATION_OUTPUT.out.multiqc_files.map{it[1]}
     versions           = ch_versions
 }
