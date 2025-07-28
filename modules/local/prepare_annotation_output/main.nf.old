@@ -11,7 +11,7 @@ process PREPARE_ANNOTATION_OUTPUT {
     tuple val(meta), path(gene_symbol_files)
     tuple val(meta2), path(consensus_peaks)
     path gtf_file
-    path lncrna_mirna_mapping
+    path lncrna_mirna_mapping, optional true
 
     output:
     tuple val(meta), path("*.raw_targets.tsv"), emit: raw_targets
@@ -42,11 +42,12 @@ process PREPARE_ANNOTATION_OUTPUT {
     echo "GTF file: ${gtf_file}"
     echo "lncRNA-miRNA mapping: ${lncrna_mirna_mapping ?: 'Not provided'}"
 
+    # Prepare final annotation output with multiple filtering levels and lncRNA-miRNA expansion
     prepare_annotation_output.py \\
         --gene_symbol_files ${gene_symbol_files.join(' ')} \\
         --consensus_peaks ${consensus_peaks} \\
         --gtf_file ${gtf_file} \\
-        ${lncrna_mirna_mapping.name != 'NO_FILE' ? "--lncrna_mirna_mapping ${lncrna_mirna_mapping}" : ""} \\
+        ${lncrna_mirna_mapping ? "--lncrna_mirna_mapping ${lncrna_mirna_mapping}" : ""} \\
         --output_prefix ${prefix} \\
         ${args}
 

@@ -1,0 +1,28 @@
+N E X T F L O W  ~  version 25.04.3
+Launching `./main.nf` [clever_torvalds] DSL2 - revision: 44f96ed81d
+----------------------------------------------------
+Multi-step Peak Annotation Parameters
+  input                           : /myriadfs/home/ucbtrr4/Scratch/nextflow/annotation-pipeline/peak-annotation-pipeline/assets/test_data/samplesheet.csv
+  consensus_peaks                 : None
+  genome                          : /myriadfs/home/ucbtrr4/Scratch/nextflow/annotation-pipeline/peak-annotation-pipeline/assets/test_data/annotations/Drosophila_melanogaster.BDGP6.54.dna.toplevel.fa
+  gtf                             : /myriadfs/home/ucbtrr4/Scratch/nextflow/annotation-pipeline/peak-annotation-pipeline/assets/test_data/annotations/drosophila_ensembl_114.gtf
+  crm_bed                         : /myriadfs/home/ucbtrr4/Scratch/nextflow/annotation-pipeline/peak-annotation-pipeline/assets/test_data/annotations/crm_bed_file_dm6_redfly.bed
+  intron_bed                      : /myriadfs/home/ucbtrr4/Scratch/nextflow/annotation-pipeline/peak-annotation-pipeline/assets/test_data/annotations/first_intron_dm6.bed
+  min_consensus_reps              : 2
+  homer_distance                  : 1000
+  intersect_overlap_fraction      : Default
+  auto_download_references        : true
+  ensembl_version                 : 114
+  species                         : drosophila_melanogaster
+  enable_lncrna_mirna_expansion   : true
+  skip_consensus                  : false
+  skip_crm                        : false
+  skip_intron                     : false
+----------------------------------------------------
+HOMER will use provided FASTA file: /myriadfs/home/ucbtrr4/Scratch/nextflow/annotation-pipeline/peak-annotation-pipeline/assets/test_data/annotations/Drosophila_melanogaster.BDGP6.54.dna.toplevel.fa
+Using provided GTF file: /myriadfs/home/ucbtrr4/Scratch/nextflow/annotation-pipeline/peak-annotation-pipeline/assets/test_data/annotations/drosophila_ensembl_114.gtf
+Using provided intron file: /myriadfs/home/ucbtrr4/Scratch/nextflow/annotation-pipeline/peak-annotation-pipeline/assets/test_data/annotations/first_intron_dm6.bed
+Extracting lncRNA-miRNA relationships from GTF file
+ERROR ~ No such variable: optional
+
+ -- Check script 'modules/local/prepare_annotation_output/main.nf' at line: 15 or see '.nextflow.log' file for more details
