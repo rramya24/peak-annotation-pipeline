@@ -64,3 +64,5 @@ work/
 
 # Keep BED files (CRM and intron files are small and needed)
 # !*.bed files will be tracked by default
+assets/test_data/annotations/*.fa
+assets/test_data/annotations/*.gtf
