@@ -1,6 +1,7 @@
 process PREPARE_ANNOTATION_OUTPUT {
     tag "$meta.id"
     label 'process_single'
+    publishDir "${params.outdir}/final_targets", mode: params.publish_dir_mode
 
     conda (params.enable_conda ? "conda-forge::python=3.9" : null)
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -10,8 +11,10 @@ process PREPARE_ANNOTATION_OUTPUT {
     input:
     tuple val(meta), path(gene_symbol_files)
     tuple val(meta2), path(consensus_peaks)
+
     path gtf_file
     path lncrna_mirna_mapping
+
 
     output:
     tuple val(meta), path("*.raw_targets.tsv"), emit: raw_targets
@@ -24,7 +27,9 @@ process PREPARE_ANNOTATION_OUTPUT {
     tuple val(meta), path("*.final_putative_targets_detailed.tsv"), emit: final_detailed
     tuple val(meta), path("*.all_target_genes.txt"), emit: all_genes
     tuple val(meta), path("*.filtering_summary.txt"), emit: summary
+
     tuple val(meta), path("*.filtering_summary.txt"), emit: multiqc_files
+
     tuple val(meta), path("*.lncrna_mirna_expansion.log"), emit: expansion_log, optional: true
     path "versions.yml", emit: versions
 
@@ -46,7 +51,9 @@ process PREPARE_ANNOTATION_OUTPUT {
         --gene_symbol_files ${gene_symbol_files.join(' ')} \\
         --consensus_peaks ${consensus_peaks} \\
         --gtf_file ${gtf_file} \\
+
         ${lncrna_mirna_mapping.name != 'NO_FILE' ? "--lncrna_mirna_mapping ${lncrna_mirna_mapping}" : ""} \\
+
         --output_prefix ${prefix} \\
         ${args}
 
