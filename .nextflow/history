@@ -1,1 +1,15 @@
 2025-07-27 00:20:41	28m 45s	cranky_swartz	OK	44f96ed81dbf627ec22fb557ae208ae6	c82d3d60-292d-4b81-9d9d-5153ba1ba1ef	nextflow run . -profile test_full,ucl_myriad --outdir results_trial5 -resume
+2025-07-29 11:37:57	8m 41s	fervent_elion	ERR	44f96ed81dbf627ec22fb557ae208ae6	d9e3c14c-4d0d-4c13-bf84-0d8fec53d097	nextflow run . -profile test_full,ucl_myriad --outdir results_new
+2025-07-29 15:14:50	18m 40s	jolly_wiles	ERR	44f96ed81dbf627ec22fb557ae208ae6	d9e3c14c-4d0d-4c13-bf84-0d8fec53d097	nextflow run . -profile test_full,ucl_myriad --outdir results_new -resume
+2025-07-29 15:49:54	2m 50s	voluminous_jones	ERR	44f96ed81dbf627ec22fb557ae208ae6	d9e3c14c-4d0d-4c13-bf84-0d8fec53d097	nextflow run . -profile test_full,ucl_myriad --outdir results_new -resume
+2025-07-29 17:47:15	3m 20s	distraught_cray	ERR	44f96ed81dbf627ec22fb557ae208ae6	d9e3c14c-4d0d-4c13-bf84-0d8fec53d097	nextflow run . -profile test_full,ucl_myriad --outdir results_new -resume
+2025-07-29 17:59:01	-	dreamy_wozniak	-	44f96ed81dbf627ec22fb557ae208ae6	d9e3c14c-4d0d-4c13-bf84-0d8fec53d097	nextflow run . -profile test_full,ucl_myriad --outdir results_new -resume
+2025-07-29 18:06:25	8m 39s	admiring_curry	OK	44f96ed81dbf627ec22fb557ae208ae6	d9e3c14c-4d0d-4c13-bf84-0d8fec53d097	nextflow run . -profile test_full,ucl_myriad --outdir results_new -resume
+2025-07-29 22:15:43	5m 17s	insane_hilbert	ERR	44f96ed81dbf627ec22fb557ae208ae6	45a42281-24c3-4b12-9f03-05d3916c23f5	nextflow run . -profile test_full,ucl_myriad --outdir results_1
+2025-07-29 22:21:14	18m 35s	curious_mandelbrot	ERR	44f96ed81dbf627ec22fb557ae208ae6	45a42281-24c3-4b12-9f03-05d3916c23f5	nextflow run . -profile test_full,ucl_myriad --outdir results_1 -resume
+2025-07-29 22:46:05	3m	lonely_sax	ERR	44f96ed81dbf627ec22fb557ae208ae6	45a42281-24c3-4b12-9f03-05d3916c23f5	nextflow run . -profile test_full,ucl_myriad --outdir results_1 -resume
+2025-07-29 22:57:26	10m 25s	silly_jennings	OK	44f96ed81dbf627ec22fb557ae208ae6	45a42281-24c3-4b12-9f03-05d3916c23f5	nextflow run . -profile test_full,ucl_myriad --outdir results_1 -resume
+2025-07-29 23:14:52	15.6s	trusting_curran	ERR	44f96ed81dbf627ec22fb557ae208ae6	45a42281-24c3-4b12-9f03-05d3916c23f5	nextflow run . -profile test_full,ucl_myriad --outdir results_2 -resume
+2025-07-29 23:15:25	26m 10s	cranky_nobel	OK	44f96ed81dbf627ec22fb557ae208ae6	66511e16-3af2-4726-ab73-aea5c0c77aa2	nextflow run . -profile test_full,ucl_myriad --outdir results_2
+2025-07-29 23:52:41	27m 11s	fervent_mcclintock	OK	44f96ed81dbf627ec22fb557ae208ae6	c977122d-46c6-48be-819e-641037eb75b0	nextflow run . -profile test_full,ucl_myriad --outdir results_3
+2025-07-30 14:40:37	37m 51s	drunk_noyce	OK	44f96ed81dbf627ec22fb557ae208ae6	d246f5db-c362-48d3-aca5-a54b87dec08a	nextflow run . -profile test_full,ucl_myriad --outdir output_updated

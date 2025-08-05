@@ -15,68 +15,71 @@ process PREPARE_ANNOTATION_OUTPUT {
     path gtf_file
     path lncrna_mirna_mapping
 
-
     output:
     tuple val(meta), path("*.raw_targets.tsv"), emit: raw_targets
     tuple val(meta), path("*.raw_targets_detailed.tsv"), emit: raw_detailed
+    tuple val(meta), path("*.raw_expanded_targets.tsv"), emit: raw_expanded_targets
+    tuple val(meta), path("*.raw_expanded_targets_detailed.tsv"), emit: raw_expanded_detailed
+    tuple val(meta), path("*.cleaned_raw_targets.tsv"), emit: cleaned_raw_targets
+    tuple val(meta), path("*.cleaned_raw_targets_detailed.tsv"), emit: cleaned_raw_detailed
+    tuple val(meta), path("*.final_cleaned_targets.tsv"), emit: final_cleaned_targets
+    tuple val(meta), path("*.final_cleaned_targets_detailed.tsv"), emit: final_cleaned_detailed
     tuple val(meta), path("*.exon_filtered_targets.tsv"), emit: exon_filtered_targets
     tuple val(meta), path("*.exon_filtered_targets_detailed.tsv"), emit: exon_filtered_detailed
-    tuple val(meta), path("*.biotype_filtered_targets.tsv"), emit: biotype_filtered_targets
-    tuple val(meta), path("*.biotype_filtered_targets_detailed.tsv"), emit: biotype_filtered_detailed
     tuple val(meta), path("*.final_putative_targets.tsv"), emit: final_targets
     tuple val(meta), path("*.final_putative_targets_detailed.tsv"), emit: final_detailed
     tuple val(meta), path("*.all_target_genes.txt"), emit: all_genes
     tuple val(meta), path("*.filtering_summary.txt"), emit: summary
-
     tuple val(meta), path("*.filtering_summary.txt"), emit: multiqc_files
-
-    tuple val(meta), path("*.lncrna_mirna_expansion.log"), emit: expansion_log, optional: true
+    tuple val(meta), path("*.lncrna_mirna_expansion_raw.log"), emit: expansion_log, optional: true
     path "versions.yml", emit: versions
 
     when:
     task.ext.when == null || task.ext.when
 
-    script:
-    def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${meta.id}"
+script:
+def args = task.ext.args ?: ''
+def prefix = task.ext.prefix ?: "${meta.id}"
 
-    """
-    echo "Starting final annotation output preparation with multiple filtering levels for ${prefix}..."
-    echo "Input files: ${gene_symbol_files}"
-    echo "Consensus peaks: ${consensus_peaks}"
-    echo "GTF file: ${gtf_file}"
-    echo "lncRNA-miRNA mapping: ${lncrna_mirna_mapping ?: 'Not provided'}"
+"""
+echo "Starting final annotation output preparation with multiple filtering levels for ${prefix}..."
+echo "Input files: ${gene_symbol_files}"
+echo "Consensus peaks: ${consensus_peaks}"
+echo "GTF file: ${gtf_file}"
+echo "lncRNA-miRNA mapping: ${lncrna_mirna_mapping ?: 'Not provided'}"
 
-    prepare_annotation_output.py \\
-        --gene_symbol_files ${gene_symbol_files.join(' ')} \\
-        --consensus_peaks ${consensus_peaks} \\
-        --gtf_file ${gtf_file} \\
+prepare_annotation_output.py \\
+    --gene_symbol_files ${gene_symbol_files.join(' ')} \\
+    --consensus_peaks ${consensus_peaks} \\
+    --gtf_file ${gtf_file} \\
+    ${lncrna_mirna_mapping.name != 'NO_FILE' ? "--lncrna_mirna_mapping ${lncrna_mirna_mapping}" : ""} \\
+    --output_prefix ${prefix} \\
+    ${args}
 
-        ${lncrna_mirna_mapping.name != 'NO_FILE' ? "--lncrna_mirna_mapping ${lncrna_mirna_mapping}" : ""} \\
-
-        --output_prefix ${prefix} \\
-        ${args}
-
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        python: \$(python --version | sed 's/Python //g')
-    END_VERSIONS
-    """
+cat <<-END_VERSIONS > versions.yml
+"${task.process}":
+    python: \$(python --version | sed 's/Python //g')
+END_VERSIONS
+"""
 
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
     touch ${prefix}.raw_targets.tsv
     touch ${prefix}.raw_targets_detailed.tsv
+    touch ${prefix}.raw_expanded_targets.tsv
+    touch ${prefix}.raw_expanded_targets_detailed.tsv
+    touch ${prefix}.cleaned_raw_targets.tsv
+    touch ${prefix}.cleaned_raw_targets_detailed.tsv
+    touch ${prefix}.final_cleaned_targets.tsv
+    touch ${prefix}.final_cleaned_targets_detailed.tsv
     touch ${prefix}.exon_filtered_targets.tsv
     touch ${prefix}.exon_filtered_targets_detailed.tsv
-    touch ${prefix}.biotype_filtered_targets.tsv
-    touch ${prefix}.biotype_filtered_targets_detailed.tsv
     touch ${prefix}.final_putative_targets.tsv
     touch ${prefix}.final_putative_targets_detailed.tsv
     touch ${prefix}.all_target_genes.txt
     touch ${prefix}.filtering_summary.txt
-    touch ${prefix}.lncrna_mirna_expansion.log
+    touch ${prefix}.lncrna_mirna_expansion_raw.log
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

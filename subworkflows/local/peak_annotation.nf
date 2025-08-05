@@ -96,10 +96,14 @@ workflow PEAK_ANNOTATION {
     // Alternative filtering levels
     raw_targets        = PREPARE_ANNOTATION_OUTPUT.out.raw_targets
     raw_detailed       = PREPARE_ANNOTATION_OUTPUT.out.raw_detailed
+    raw_expanded_targets = PREPARE_ANNOTATION_OUTPUT.out.raw_expanded_targets
+    raw_expanded_detailed = PREPARE_ANNOTATION_OUTPUT.out.raw_expanded_detailed
+    cleaned_raw_targets = PREPARE_ANNOTATION_OUTPUT.out.cleaned_raw_targets
+    cleaned_raw_detailed = PREPARE_ANNOTATION_OUTPUT.out.cleaned_raw_detailed
+    final_cleaned_targets = PREPARE_ANNOTATION_OUTPUT.out.final_cleaned_targets
+    final_cleaned_detailed = PREPARE_ANNOTATION_OUTPUT.out.final_cleaned_detailed
     exon_filtered_targets = PREPARE_ANNOTATION_OUTPUT.out.exon_filtered_targets
     exon_filtered_detailed = PREPARE_ANNOTATION_OUTPUT.out.exon_filtered_detailed
-    biotype_filtered_targets = PREPARE_ANNOTATION_OUTPUT.out.biotype_filtered_targets
-    biotype_filtered_detailed = PREPARE_ANNOTATION_OUTPUT.out.biotype_filtered_detailed
 
     // Legacy and summary outputs
     target_genes       = PREPARE_ANNOTATION_OUTPUT.out.all_genes  // Legacy compatibility
@@ -114,6 +118,6 @@ workflow PEAK_ANNOTATION {
 
     // Other outputs
     homer_plots        = Channel.empty()
-    multiqc_files      = PREPARE_ANNOTATION_OUTPUT.out.multiqc_files.map{it[1]}  // FIXED THIS LINE
+    multiqc_files      = PREPARE_ANNOTATION_OUTPUT.out.multiqc_files.map{it[1]}
     versions           = ch_versions
 }
